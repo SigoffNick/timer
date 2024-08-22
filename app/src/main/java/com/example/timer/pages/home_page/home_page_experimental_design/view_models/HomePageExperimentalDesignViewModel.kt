@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.view_models
+package com.example.timer.pages.home_page.home_page_experimental_design.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +10,7 @@ import com.example.timer.pages.home_page.training_programs.AmateurBoxingProgram
 import com.example.timer.pages.home_page.training_programs.BoxingProgram
 import com.example.timer.pages.home_page.training_programs.ClassicBoxingProgram
 import com.example.timer.pages.home_page.training_programs.TestingBoxingProgram
+import com.example.timer.pages.home_page.view_models.TimerState
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.Timer
@@ -18,14 +19,7 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-enum class TimerState {
-    WORK,
-    REST,
-    READY_TO_START,
-    PREPARATION,
-}
-
-class HomeViewModel : ViewModel() {
+class HomePageExperimentalDesignViewModel : ViewModel() {
     val programsList = listOf(
         TestingBoxingProgram(),
         ClassicBoxingProgram(),

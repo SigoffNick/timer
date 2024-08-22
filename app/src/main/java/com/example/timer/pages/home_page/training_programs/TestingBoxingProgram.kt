@@ -1,6 +1,5 @@
 package com.example.timer.pages.home_page.training_programs
 
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class TestingBoxingProgram : BoxingProgram(
