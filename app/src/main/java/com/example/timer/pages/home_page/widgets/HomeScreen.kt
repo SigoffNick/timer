@@ -55,15 +55,15 @@ fun HomeScreen(viewModel: HomeViewModel) {
                 ResetRoundButton { viewModel.stopTimer() }
                 Spacer(modifier = Modifier.weight(1f))
                 MainTimer(
-                    color = selectBackgroundColor(viewModel.timerState.value),
+                    color = selectBackgroundColor(viewModel.currentTimerState.value),
                     progress = viewModel.progress.floatValue,
                     currentRound = viewModel.currentRound.intValue,
                     totalRounds = viewModel.selectedItem.value.numberOfRounds,
-                    time = if (viewModel.timerState.value == TimerState.WORK || viewModel.timerState.value == TimerState.READY_TO_START) viewModel.currentWorkTime.value else viewModel.currentRestTime.value
+                    time = if (viewModel.currentTimerState.value == TimerState.WORK || viewModel.currentTimerState.value == TimerState.READY_TO_START) viewModel.currentWorkTime.value else viewModel.currentRestTime.value
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 PlayButton(
-                    onSwitch = { viewModel.switchTimer() },
+                    onSwitch = { viewModel.startUITimer() },
                     isActive = viewModel.isPlaying.value
                 )
                 Spacer(modifier = Modifier.height(16.dp))

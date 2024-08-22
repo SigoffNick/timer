@@ -17,7 +17,7 @@ import kotlin.time.Duration
 fun MainTimer(
     progress: Float,
     modifier: Modifier = Modifier,
-    color: Color = Color.White,
+    color: Color,
     strokeWidth: Float = 30f,
     time: Duration,
     currentRound: Int,

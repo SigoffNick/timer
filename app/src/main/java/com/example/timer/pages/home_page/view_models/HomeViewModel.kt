@@ -10,8 +10,10 @@ import com.example.timer.pages.home_page.training_programs.AmateurBoxingProgram
 import com.example.timer.pages.home_page.training_programs.BoxingProgram
 import com.example.timer.pages.home_page.training_programs.ClassicBoxingProgram
 import com.example.timer.pages.home_page.training_programs.TestingBoxingProgram
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -29,13 +31,15 @@ class HomeViewModel : ViewModel() {
         AmateurBoxingProgram(),
     )
     private val _selectedItem = mutableStateOf(programsList[0])
+    private val uiTimer = Timer()
     val selectedItem: State<BoxingProgram> = _selectedItem
     val isPlaying = mutableStateOf(false)
     val currentRound = mutableIntStateOf(1)
     val currentWorkTime = mutableStateOf(_selectedItem.value.workDuration)
     val currentRestTime = mutableStateOf(_selectedItem.value.restDuration)
-    val timerState = mutableStateOf(TimerState.READY_TO_START)
+    val currentTimerState = mutableStateOf(TimerState.READY_TO_START)
     val progress = mutableFloatStateOf(1f)
+    val coro = viewModelScope
 
 
     fun onItemSelected(item: BoxingProgram) {
@@ -45,61 +49,62 @@ class HomeViewModel : ViewModel() {
         currentRound.intValue = 1
         progress.floatValue = 1f
         isPlaying.value = false
-        timerState.value = TimerState.READY_TO_START
+        currentTimerState.value = TimerState.READY_TO_START
     }
 
-    fun switchTimer() {
+    fun startUITimer() {
         isPlaying.value = !isPlaying.value
-        if (isPlaying.value) {
-            timerState.value = TimerState.WORK
-            viewModelScope.launch {
-                while (isPlaying.value) {
-                    if (currentRound.intValue > _selectedItem.value.numberOfRounds) {
-                        isPlaying.value = false
-                        currentRound.intValue = 1
-                        currentWorkTime.value = _selectedItem.value.workDuration
-                        currentRestTime.value = _selectedItem.value.restDuration
-                        timerState.value = TimerState.READY_TO_START
-                        progress.floatValue = 1f
-                        break
-                    }
-                    if (currentWorkTime.value < Duration.ZERO) {
-                        if (currentRound.intValue == _selectedItem.value.numberOfRounds) {
-                            isPlaying.value = false
-                            currentRound.intValue = 1
-                            currentWorkTime.value = _selectedItem.value.workDuration
-                            currentRestTime.value = _selectedItem.value.restDuration
-                            timerState.value = TimerState.READY_TO_START
-                            progress.floatValue = 1f
-                            break
+        if (!isPlaying.value) {
+            coro.cancel()
+            return
+        }
+        coro.launch {
+            uiTimer.schedule(object : TimerTask() {
+                override fun run() {
+                    when (currentTimerState.value) {
+
+                        TimerState.READY_TO_START -> {
+                            if (isPlaying.value) {
+                                currentTimerState.value = TimerState.WORK
+                            }
                         }
-                        if (timerState.value != TimerState.REST) {
-                            progress.floatValue = 1f
+
+                        TimerState.REST -> {
+                            if (!isPlaying.value) {
+                                return
+                            }
+                            if (currentRestTime.value > Duration.ZERO) {
+                                currentRestTime.value =
+                                    currentRestTime.value.minus(16.toDuration(DurationUnit.MILLISECONDS))
+                                progress.floatValue =
+                                    currentRestTime.value.div(_selectedItem.value.restDuration)
+                                        .toFloat()
+                            } else {
+                                currentTimerState.value = TimerState.WORK
+                                currentRestTime.value = _selectedItem.value.restDuration
+                                currentRound.intValue += 1
+                            }
                         }
-                        timerState.value = TimerState.REST
-                        if (currentRestTime.value < Duration.ZERO) {
-                            timerState.value = TimerState.WORK
-                            currentRound.intValue += 1
-                            currentWorkTime.value = _selectedItem.value.workDuration
-                            currentRestTime.value = _selectedItem.value.restDuration
-                            progress.floatValue = 1f
-                        } else {
-                            delay(1000L)
-                            currentRestTime.value =
-                                currentRestTime.value.minus(1.toDuration(DurationUnit.SECONDS))
-                            progress.floatValue =
-                                currentRestTime.value.div(_selectedItem.value.restDuration)
-                                    .toFloat()
+
+                        TimerState.WORK -> {
+                            if (!isPlaying.value) {
+                                return
+                            }
+                            if (currentWorkTime.value > Duration.ZERO) {
+                                currentWorkTime.value =
+                                    currentWorkTime.value.minus(16.toDuration(DurationUnit.MILLISECONDS))
+                                progress.floatValue =
+                                    currentWorkTime.value.div(_selectedItem.value.workDuration)
+                                        .toFloat()
+                            } else {
+                                currentTimerState.value = TimerState.REST
+                                currentWorkTime.value = _selectedItem.value.workDuration
+                            }
+
                         }
-                    } else {
-                        delay(1000L)
-                        currentWorkTime.value =
-                            currentWorkTime.value.minus(1.toDuration(DurationUnit.SECONDS))
-                        progress.floatValue =
-                            currentWorkTime.value.div(_selectedItem.value.workDuration).toFloat()
                     }
                 }
-            }
+            }, 0, 16)
         }
     }
 
@@ -108,7 +113,7 @@ class HomeViewModel : ViewModel() {
         currentRound.intValue = 1
         currentWorkTime.value = _selectedItem.value.workDuration
         currentRestTime.value = _selectedItem.value.restDuration
-        timerState.value = TimerState.READY_TO_START
+        currentTimerState.value = TimerState.READY_TO_START
         progress.floatValue = 1f
     }
 }
