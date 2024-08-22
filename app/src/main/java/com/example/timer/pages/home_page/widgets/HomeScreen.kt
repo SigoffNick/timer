@@ -33,7 +33,9 @@ fun HomeScreen(viewModel: HomeViewModel) {
             painter = painterResource(id = R.drawable.background_image),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize().blur(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(8.dp),
         )
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -50,6 +52,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     selectedItem = viewModel.selectedItem.value,
                     onItemSelected = { viewModel.onItemSelected(it) })
                 ProgramDescription(selectedProgram = viewModel.selectedItem.value)
+                ResetRoundButton { viewModel.stopTimer() }
                 Spacer(modifier = Modifier.weight(1f))
                 MainTimer(
                     color = selectBackgroundColor(viewModel.timerState.value),
@@ -59,7 +62,10 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     time = if (viewModel.timerState.value == TimerState.WORK || viewModel.timerState.value == TimerState.READY_TO_START) viewModel.currentWorkTime.value else viewModel.currentRestTime.value
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                PlayButton(onClick = { viewModel.switchTimer() }, viewModel.isPlaying.value)
+                PlayButton(
+                    onSwitch = { viewModel.switchTimer() },
+                    isActive = viewModel.isPlaying.value
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }

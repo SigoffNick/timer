@@ -102,4 +102,13 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+
+    fun stopTimer() {
+        isPlaying.value = false
+        currentRound.intValue = 1
+        currentWorkTime.value = _selectedItem.value.workDuration
+        currentRestTime.value = _selectedItem.value.restDuration
+        timerState.value = TimerState.READY_TO_START
+        progress.floatValue = 1f
+    }
 }
