@@ -52,7 +52,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     items = viewModel.programsList,
                     selectedItem = viewModel.selectedItem.value,
                     onItemSelected = { viewModel.onItemSelected(it) })
-                ProgramDescription(selectedProgram = viewModel.selectedItem.value)
+                Spacer(modifier = Modifier.height(16.dp))
                 ResetRoundButton { viewModel.stopTimer() }
                 Spacer(modifier = Modifier.weight(1f))
                 MainTimer(
@@ -85,10 +85,10 @@ fun getCurrentTim(viewModel: HomeViewModel): Duration {
 
 fun selectBackgroundColor(timerState: TimerState): Color {
     return when (timerState) {
-        TimerState.WORK -> Color.Cyan
-        TimerState.REST -> Color.Green
+        TimerState.WORK -> Color.Red.copy(alpha = 0.5f)
+        TimerState.REST -> Color.Green.copy(alpha = 0.5f)
         TimerState.READY_TO_START -> Color.White
-        TimerState.PREPARATION -> Color.Yellow
+        TimerState.PREPARATION -> Color.Yellow.copy(alpha = 0.5f)
     }
 }
 
