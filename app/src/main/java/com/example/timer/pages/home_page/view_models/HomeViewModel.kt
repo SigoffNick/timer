@@ -48,6 +48,7 @@ class HomeViewModel : ViewModel() {
         _selectedItem.value = item
         currentWorkTime.value = item.workDuration
         currentRestTime.value = item.restDuration
+        currentPreparationTime.value = item.preparationTime
         currentRound.intValue = 0
         progress.floatValue = 1f
         isPlaying.value = false
@@ -132,6 +133,7 @@ class HomeViewModel : ViewModel() {
         currentRound.intValue = 1
         currentWorkTime.value = _selectedItem.value.workDuration
         currentRestTime.value = _selectedItem.value.restDuration
+        currentPreparationTime.value = _selectedItem.value.preparationTime
         currentTimerState.value = TimerState.READY_TO_START
         progress.floatValue = 1f
     }
