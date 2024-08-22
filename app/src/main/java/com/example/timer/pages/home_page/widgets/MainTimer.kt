@@ -17,8 +17,8 @@ import kotlin.time.Duration
 fun MainTimer(
     progress: Float,
     modifier: Modifier = Modifier,
-    color: Color,
-    strokeWidth: Float = 30f,
+    color: Color = Color.White,
+    strokeWidth: Float = 50f,
     time: Duration,
     currentRound: Int,
     totalRounds: Int,
@@ -37,7 +37,7 @@ fun MainTimer(
         SegmentedCircle(
             totalRounds = totalRounds,
             strokeWidth = strokeWidth,
-            modifier = modifier.size(380.dp),
+            modifier = modifier.size(400.dp),
             currentRound = currentRound,
             color = color
         )

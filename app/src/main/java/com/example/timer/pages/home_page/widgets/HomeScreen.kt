@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.timer.R
 import com.example.timer.pages.home_page.view_models.TimerState
 import com.example.timer.ui.theme.TimerTheme
+import kotlin.time.Duration
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
@@ -59,7 +60,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     progress = viewModel.progress.floatValue,
                     currentRound = viewModel.currentRound.intValue,
                     totalRounds = viewModel.selectedItem.value.numberOfRounds,
-                    time = if (viewModel.currentTimerState.value == TimerState.WORK || viewModel.currentTimerState.value == TimerState.READY_TO_START) viewModel.currentWorkTime.value else viewModel.currentRestTime.value
+                    time = getCurrentTim(viewModel)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 PlayButton(
@@ -72,11 +73,22 @@ fun HomeScreen(viewModel: HomeViewModel) {
     }
 }
 
+fun getCurrentTim(viewModel: HomeViewModel): Duration {
+    return when (viewModel.currentTimerState.value) {
+        TimerState.WORK -> viewModel.currentWorkTime.value
+        TimerState.REST -> viewModel.currentRestTime.value
+        TimerState.PREPARATION -> viewModel.currentPreparationTime.value
+        TimerState.READY_TO_START -> viewModel.selectedItem.value.workDuration
+    }
+}
+
+
 fun selectBackgroundColor(timerState: TimerState): Color {
     return when (timerState) {
         TimerState.WORK -> Color.Cyan
         TimerState.REST -> Color.Green
         TimerState.READY_TO_START -> Color.White
+        TimerState.PREPARATION -> Color.Yellow
     }
 }
 

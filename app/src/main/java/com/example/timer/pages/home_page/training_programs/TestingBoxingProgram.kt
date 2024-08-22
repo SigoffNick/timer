@@ -7,5 +7,6 @@ class TestingBoxingProgram : BoxingProgram(
     workDuration = 10.seconds,
     restDuration = 5.seconds,
     numberOfRounds = 12,
-    name = "Testing Boxing"
+    name = "Testing Boxing",
+    preparationTime = 5.seconds
 )

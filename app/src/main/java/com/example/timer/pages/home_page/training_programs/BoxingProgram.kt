@@ -7,4 +7,5 @@ abstract class BoxingProgram(
     val restDuration: Duration,
     val numberOfRounds: Int,
     val name: String,
+    val preparationTime: Duration,
 )

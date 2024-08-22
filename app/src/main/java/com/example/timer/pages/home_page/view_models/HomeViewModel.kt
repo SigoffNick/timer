@@ -21,7 +21,8 @@ import kotlin.time.toDuration
 enum class TimerState {
     WORK,
     REST,
-    READY_TO_START
+    READY_TO_START,
+    PREPARATION,
 }
 
 class HomeViewModel : ViewModel() {
@@ -32,21 +33,22 @@ class HomeViewModel : ViewModel() {
     )
     private val _selectedItem = mutableStateOf(programsList[0])
     private val uiTimer = Timer()
+    private val scope = viewModelScope
     val selectedItem: State<BoxingProgram> = _selectedItem
     val isPlaying = mutableStateOf(false)
-    val currentRound = mutableIntStateOf(1)
+    val currentRound = mutableIntStateOf(0)
     val currentWorkTime = mutableStateOf(_selectedItem.value.workDuration)
     val currentRestTime = mutableStateOf(_selectedItem.value.restDuration)
+    val currentPreparationTime = mutableStateOf(_selectedItem.value.preparationTime)
     val currentTimerState = mutableStateOf(TimerState.READY_TO_START)
     val progress = mutableFloatStateOf(1f)
-    val coro = viewModelScope
 
 
     fun onItemSelected(item: BoxingProgram) {
         _selectedItem.value = item
         currentWorkTime.value = item.workDuration
         currentRestTime.value = item.restDuration
-        currentRound.intValue = 1
+        currentRound.intValue = 0
         progress.floatValue = 1f
         isPlaying.value = false
         currentTimerState.value = TimerState.READY_TO_START
@@ -55,17 +57,34 @@ class HomeViewModel : ViewModel() {
     fun startUITimer() {
         isPlaying.value = !isPlaying.value
         if (!isPlaying.value) {
-            coro.cancel()
+            scope.cancel()
             return
         }
-        coro.launch {
+        scope.launch {
             uiTimer.schedule(object : TimerTask() {
                 override fun run() {
                     when (currentTimerState.value) {
 
                         TimerState.READY_TO_START -> {
                             if (isPlaying.value) {
+                                currentTimerState.value = TimerState.PREPARATION
+                            }
+                        }
+
+                        TimerState.PREPARATION -> {
+                            if (!isPlaying.value) {
+                                return
+                            }
+                            if (currentPreparationTime.value > Duration.ZERO) {
+                                currentPreparationTime.value =
+                                    currentPreparationTime.value.minus(16.toDuration(DurationUnit.MILLISECONDS))
+                                progress.floatValue =
+                                    currentPreparationTime.value.div(_selectedItem.value.preparationTime)
+                                        .toFloat()
+                            } else {
                                 currentTimerState.value = TimerState.WORK
+                                currentRound.intValue += 1
+                                currentWorkTime.value = _selectedItem.value.workDuration
                             }
                         }
 
