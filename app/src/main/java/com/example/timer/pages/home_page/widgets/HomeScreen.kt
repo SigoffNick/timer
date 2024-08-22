@@ -60,7 +60,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     progress = viewModel.progress.floatValue,
                     currentRound = viewModel.currentRound.intValue,
                     totalRounds = viewModel.selectedItem.value.numberOfRounds,
-                    time = getCurrentTim(viewModel)
+                    time = getCurrentTim(viewModel),
+                    modifier = Modifier.padding(16.dp)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 PlayButton(

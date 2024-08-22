@@ -130,7 +130,7 @@ class HomeViewModel : ViewModel() {
 
     fun stopTimer() {
         isPlaying.value = false
-        currentRound.intValue = 1
+        currentRound.intValue = 0
         currentWorkTime.value = _selectedItem.value.workDuration
         currentRestTime.value = _selectedItem.value.restDuration
         currentPreparationTime.value = _selectedItem.value.preparationTime

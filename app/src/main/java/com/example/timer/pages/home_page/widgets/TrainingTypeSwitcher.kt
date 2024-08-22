@@ -18,9 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.timer.pages.home_page.training_programs.AmateurBoxingProgram
 import com.example.timer.pages.home_page.training_programs.BoxingProgram
-import com.example.timer.pages.home_page.training_programs.ClassicBoxingProgram
 
 @Composable
 fun TrainingTypeSwitcher(
