@@ -8,13 +8,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.timer.pages.home_page.widgets.ResetRoundButton
 
 @Composable
 fun PlayButton(
-    onSwitch: () -> Unit,
     isActive: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSwitch: () -> Unit,
 ) {
 
     Box(modifier = modifier) {
@@ -56,4 +58,10 @@ fun PlayButton(
             }
         }
     }
+}
+
+@Preview()
+@Composable()
+fun PlayButtonPreview(){
+    PlayButton (true, Modifier) {}
 }

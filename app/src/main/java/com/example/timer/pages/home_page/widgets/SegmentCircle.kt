@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SegmentedCircle(
@@ -30,4 +31,10 @@ fun SegmentedCircle(
             )
         }
     }
+}
+
+@Preview()
+@Composable()
+fun SegmentCirclePreview(){
+    SegmentedCircle(12, 0, strokeWidth = 20f, color = Color.Black)
 }

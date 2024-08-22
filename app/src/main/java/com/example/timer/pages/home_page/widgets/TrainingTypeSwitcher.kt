@@ -17,8 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.timer.pages.home_page.training_programs.BoxingProgram
+import com.example.timer.pages.home_page.view_models.HomeViewModel
 
 @Composable
 fun TrainingTypeSwitcher(
@@ -59,5 +61,16 @@ fun TrainingTypeSwitcher(
                     })
             }
         }
+    }
+}
+
+@Preview()
+@Composable
+fun TrainingTypeSwitcherPreview() {
+    val viewModel = HomeViewModel()
+    TrainingTypeSwitcher(viewModel.programsList, viewModel.selectedItem.value) { item ->
+        viewModel.onItemSelected(
+            item
+        )
     }
 }

@@ -40,7 +40,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
         )
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
         ) { innerPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,8 +60,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     progress = viewModel.progress.floatValue,
                     currentRound = viewModel.currentRound.intValue,
                     totalRounds = viewModel.selectedItem.value.numberOfRounds,
-                    time = getCurrentTim(viewModel),
-                    modifier = Modifier.padding(16.dp)
+                    time = getCurrentTime(viewModel),
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 PlayButton(
@@ -74,7 +73,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
     }
 }
 
-fun getCurrentTim(viewModel: HomeViewModel): Duration {
+fun getCurrentTime(viewModel: HomeViewModel): Duration {
     return when (viewModel.currentTimerState.value) {
         TimerState.WORK -> viewModel.currentWorkTime.value
         TimerState.REST -> viewModel.currentRestTime.value
