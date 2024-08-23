@@ -40,12 +40,12 @@ fun HomePage(viewModel: HomePageViewModel) {
                 ProgramDescription(selectedProgram = viewModel.selectedItem.value)
                 Spacer(modifier = Modifier.weight(1f))
                 MainTimer(
-                    time = if (viewModel.currentTimerState.value == TimerState.WORK || viewModel.currentTimerState.value == TimerState.READY_TO_START) viewModel.currentWorkTime.value else viewModel.currentRestTime.value
+                    time = viewModel.shownTime.value,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 RoundCounter(
                     totalRounds = viewModel.selectedItem.value.numberOfRounds,
-                    currentRound = viewModel.currentRound.value
+                    currentRound = viewModel.currentRound.intValue
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 PlayButton(
