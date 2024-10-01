@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.timer.R
 import com.example.timer.pages.home_page.view_models.TimerState
-import com.example.timer.ui.theme.TimerTheme
+import com.example.timer.ui.theme.StopWatchTheme
 import kotlin.time.Duration
 
 @Composable
@@ -97,7 +97,7 @@ fun selectBackgroundColor(timerState: TimerState): Color {
 @Composable
 fun GreetingPreview() {
     val viewModel = HomePageExperimentalDesignViewModel()
-    TimerTheme {
+    StopWatchTheme {
         HomePageExperimentalDesign(viewModel)
     }
 }
