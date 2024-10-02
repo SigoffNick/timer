@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.widgets
+package com.example.timer.ui.timer_page.widgets
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween

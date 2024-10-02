@@ -1,4 +1,4 @@
-package com.example.timer.util
+package com.example.timer.core
 
 fun formatTime(seconds: String, minutes: String, hours: String): String {
     return "$hours:$minutes:$seconds"

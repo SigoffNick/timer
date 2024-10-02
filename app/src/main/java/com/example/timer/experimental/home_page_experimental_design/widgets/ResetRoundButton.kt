@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.home_page_experimental_design.widgets
+package com.example.timer.experimental.home_page_experimental_design.widgets
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons

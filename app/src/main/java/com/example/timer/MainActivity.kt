@@ -16,15 +16,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.timer.service.StopwatchService
-import com.example.timer.ui.StopWatchScreen
-import com.example.timer.ui.theme.StopWatchTheme
+import com.example.timer.core.theme.StopWatchTheme
+import com.example.timer.pages.home_page.view_models.HomePageViewModel
+import com.example.timer.ui.timer_page.TimerPage
 
 class MainActivity : ComponentActivity() {
 
     private var isBound by mutableStateOf(false)
+
     @OptIn(ExperimentalAnimationApi::class)
     private lateinit var stopwatchService: StopwatchService
-    @OptIn(ExperimentalAnimationApi::class)
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as StopwatchService.StopwatchBinder
@@ -37,7 +39,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onStart() {
         super.onStart()
         Intent(this, StopwatchService::class.java).also { intent ->
@@ -45,13 +46,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             StopWatchTheme {
                 if (isBound) {
-                    StopWatchScreen(stopwatchService = stopwatchService)
+                    val viewModel = HomePageViewModel(stopwatchService = stopwatchService)
+                    TimerPage(viewModel = viewModel)
                 }
             }
         }

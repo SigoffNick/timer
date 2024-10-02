@@ -6,7 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.app.NotificationCompat
 import com.example.timer.R
 import com.example.timer.service.ServiceHelper
-import com.example.timer.util.Constant
+import com.example.timer.core.Constant
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

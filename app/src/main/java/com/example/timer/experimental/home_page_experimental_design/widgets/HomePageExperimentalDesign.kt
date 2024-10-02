@@ -1,7 +1,7 @@
-package com.example.timer.pages.home_page.home_page_experimental_design.widgets
+package com.example.timer.experimental.home_page_experimental_design.widgets
 
 import MainTimer
-import com.example.timer.pages.home_page.home_page_experimental_design.view_models.HomePageExperimentalDesignViewModel
+import com.example.timer.experimental.home_page_experimental_design.view_models.HomePageExperimentalDesignViewModel
 import PlayButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.timer.R
 import com.example.timer.pages.home_page.view_models.TimerState
-import com.example.timer.ui.theme.StopWatchTheme
+import com.example.timer.core.theme.StopWatchTheme
 import kotlin.time.Duration
 
 @Composable

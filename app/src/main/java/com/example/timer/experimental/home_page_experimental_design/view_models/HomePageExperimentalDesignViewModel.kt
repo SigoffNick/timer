@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.home_page_experimental_design.view_models
+package com.example.timer.experimental.home_page_experimental_design.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
@@ -6,10 +6,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.viewModelScope
-import com.example.timer.pages.home_page.training_programs.AmateurBoxingProgram
-import com.example.timer.pages.home_page.training_programs.BoxingProgram
-import com.example.timer.pages.home_page.training_programs.ClassicBoxingProgram
-import com.example.timer.pages.home_page.training_programs.TestingBoxingProgram
+import com.example.timer.core.training_programs.AmateurBoxingProgram
+import com.example.timer.core.training_programs.BoxingProgram
+import com.example.timer.core.training_programs.ClassicBoxingProgram
+import com.example.timer.core.training_programs.TestingBoxingProgram
 import com.example.timer.pages.home_page.view_models.TimerState
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

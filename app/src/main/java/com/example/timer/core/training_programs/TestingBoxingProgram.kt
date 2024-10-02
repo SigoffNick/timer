@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.training_programs
+package com.example.timer.core.training_programs
 
 import kotlin.time.Duration.Companion.seconds
 

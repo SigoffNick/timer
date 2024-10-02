@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.widgets
+package com.example.timer.ui.timer_page.widgets
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.timer.pages.home_page.training_programs.BoxingProgram
+import com.example.timer.core.training_programs.BoxingProgram
 import kotlin.time.Duration
 
 

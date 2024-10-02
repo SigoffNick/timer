@@ -6,12 +6,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
-import com.example.timer.util.Constant
-import com.example.timer.util.formatTime
-import com.example.timer.util.pad
+import com.example.timer.core.Constant
+import com.example.timer.core.formatTime
+import com.example.timer.core.pad
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -23,12 +24,14 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-@ExperimentalAnimationApi
+
 @AndroidEntryPoint
 class StopwatchService : Service() {
 
-    @Inject lateinit var notificationManager: NotificationManager
-    @Inject lateinit var notificationBuilder: NotificationCompat.Builder
+    @Inject
+    lateinit var notificationManager: NotificationManager
+    @Inject
+    lateinit var notificationBuilder: NotificationCompat.Builder
 
     private val binder = StopwatchBinder()
 
@@ -55,10 +58,12 @@ class StopwatchService : Service() {
                     updateNotification(hours = hours, minutes = minutes, seconds = seconds)
                 }
             }
+
             StopwatchState.Stopped.name -> {
                 setResumeButton()
                 stopStopwatch()
             }
+
             StopwatchState.Canceled.name -> {
                 stopForegroundService()
                 stopStopwatch()
@@ -74,10 +79,12 @@ class StopwatchService : Service() {
                     }
                     setStopButton()
                 }
+
                 Constant.ACTION_SERVICE_STOP -> {
                     stopStopwatch()
                     setResumeButton()
                 }
+
                 Constant.ACTION_SERVICE_CANCEL -> {
                     stopForegroundService()
                     stopStopwatch()
@@ -133,11 +140,15 @@ class StopwatchService : Service() {
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            Constant.NOTIFICATION_CHANNEL_ID,
-            Constant.NOTIFICATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_LOW
-        )
+        val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel(
+                Constant.NOTIFICATION_CHANNEL_ID,
+                Constant.NOTIFICATION_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_LOW
+            )
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
         notificationManager.createNotificationChannel(channel)
     }
 

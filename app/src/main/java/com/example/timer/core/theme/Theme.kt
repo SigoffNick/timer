@@ -1,4 +1,4 @@
-package com.example.timer.ui.theme
+package com.example.timer.core.theme
 
 import android.app.Activity
 import android.os.Build

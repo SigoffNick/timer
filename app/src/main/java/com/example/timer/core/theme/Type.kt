@@ -1,4 +1,4 @@
-package com.example.timer.ui.theme
+package com.example.timer.core.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

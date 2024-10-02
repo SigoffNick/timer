@@ -3,20 +3,15 @@ package com.example.timer.service
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.compose.animation.ExperimentalAnimationApi
-import com.example.timer.util.Constant
+import com.example.timer.core.Constant
 import com.example.timer.MainActivity
 
 
-@ExperimentalAnimationApi
+
 object ServiceHelper {
 
-    private val flag =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            PendingIntent.FLAG_IMMUTABLE
-        else
-            0
+    private const val flag = PendingIntent.FLAG_IMMUTABLE
 
     fun clickPendingIntent(context: Context): PendingIntent {
         val clickIntent = Intent(context, MainActivity::class.java).apply {

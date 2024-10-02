@@ -1,4 +1,4 @@
-package com.example.timer.util
+package com.example.timer.core
 
 object Constant {
     const val ACTION_SERVICE_START = "ACTION_SERVICE_START"
