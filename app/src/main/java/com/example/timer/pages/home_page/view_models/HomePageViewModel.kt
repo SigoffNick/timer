@@ -17,7 +17,6 @@ import com.example.timer.service.StopwatchService
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-@OptIn(ExperimentalAnimationApi::class)
 class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
     val programsList = listOf(
         TestingBoxingProgram(),
@@ -25,11 +24,9 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
         AmateurBoxingProgram(),
     )
     private val _selectedItem = mutableStateOf(programsList[0])
-    private var uiTimer: CustomTimer? = null
     val selectedItem: State<BoxingProgram> = _selectedItem
     val currentRound = mutableIntStateOf(0)
     val currentTimerState = mutableStateOf(TimerState.READY_TO_START)
-    val hours by stopwatchService.hours
     val minutes by stopwatchService.minutes
     val seconds by stopwatchService.seconds
 
@@ -42,7 +39,7 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
 
     fun startTimer(context: Context) {
         ServiceHelper.triggerForegroundService(
-            context = context, action = Constant.ACTION_SERVICE_START
+            context = context, action = Constant.ACTION_SERVICE_START, minutes = 1, seconds = 0
         )
     }
 

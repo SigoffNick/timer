@@ -3,9 +3,16 @@ package com.example.timer.core.training_programs
 import kotlin.time.Duration.Companion.seconds
 
 class TestingBoxingProgram : BoxingProgram(
-    workDuration = 10.seconds,
-    restDuration = 5.seconds,
-    numberOfRounds = 12,
+    numberOfRounds = 4,
     name = "Testing Boxing",
-    preparationTime = 5.seconds
+    programFlow = listOf(
+        10.seconds,
+        5.seconds,
+        3.seconds,
+        5.seconds,
+        3.seconds,
+        5.seconds,
+        3.seconds,
+        5.seconds,
+    )
 )

@@ -4,9 +4,16 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class AmateurBoxingProgram : BoxingProgram(
-    workDuration = 2.minutes,
-    restDuration = 1.minutes,
     numberOfRounds = 4,
     name = "Amateur Boxing",
-    preparationTime = 20.seconds
+    programFlow = listOf(
+        10.seconds,
+        2.minutes,
+        1.minutes,
+        2.minutes,
+        1.minutes,
+        2.minutes,
+        1.minutes,
+        2.minutes,
+    )
 )

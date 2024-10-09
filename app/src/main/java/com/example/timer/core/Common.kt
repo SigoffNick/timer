@@ -1,7 +1,7 @@
 package com.example.timer.core
 
-fun formatTime(seconds: String, minutes: String, hours: String): String {
-    return "$hours:$minutes:$seconds"
+fun formatTime(seconds: String, minutes: String): String {
+    return "$minutes:$seconds"
 }
 
 fun Int.pad(): String {

@@ -7,7 +7,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.example.timer.core.Constant
@@ -24,43 +23,47 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-
+/**
+ * The StopwatchService is declared in the AndroidManifest.xml file to handle specific intents.
+ * This StopwatchService will catch and handle the intents triggered by the triggerForegroundService function.
+ */
 @AndroidEntryPoint
 class StopwatchService : Service() {
 
     @Inject
-    lateinit var notificationManager: NotificationManager
-    @Inject
-    lateinit var notificationBuilder: NotificationCompat.Builder
+    lateinit var notificationHelper: NotificationHelper
 
     private val binder = StopwatchBinder()
 
     private var duration: Duration = Duration.ZERO
     private lateinit var timer: Timer
 
-    var seconds = mutableStateOf("00")
-        private set
     var minutes = mutableStateOf("00")
         private set
-    var hours = mutableStateOf("00")
+    var seconds = mutableStateOf("00")
         private set
     var currentState = mutableStateOf(StopwatchState.Idle)
         private set
 
     override fun onBind(intent: Intent?) = binder
 
+    /**
+     * The part of the StopwatchService that is designed to catch intents is the onStartCommand method.
+     * This method handles the incoming intents and performs actions based on the intent's action or extra data.
+     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Check the intent's extra data to determine the action to be performed.
         when (intent?.getStringExtra(Constant.STOPWATCH_STATE)) {
             StopwatchState.Started.name -> {
-                setStopButton()
+                notificationHelper.setStopButton(this)
                 startForegroundService()
-                startStopwatch { hours, minutes, seconds ->
-                    updateNotification(hours = hours, minutes = minutes, seconds = seconds)
+                startStopwatch { minutes, seconds ->
+                    notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
                 }
             }
 
             StopwatchState.Stopped.name -> {
-                setResumeButton()
+                notificationHelper.setResumeButton(this)
                 stopStopwatch()
             }
 
@@ -70,19 +73,26 @@ class StopwatchService : Service() {
                 cancelStopwatch()
             }
         }
+
+        val initialTime = intent?.getStringExtra(Constant.INITIAL_TIME)
+        if (initialTime != null) {
+            val (m, s) = initialTime.split(":")
+            duration = createDuration(m.toInt(), s.toInt())
+        }
+
         intent?.action.let {
             when (it) {
                 Constant.ACTION_SERVICE_START -> {
                     startForegroundService()
-                    startStopwatch { hours, minutes, seconds ->
-                        updateNotification(hours = hours, minutes = minutes, seconds = seconds)
+                    startStopwatch { minutes, seconds ->
+                        notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
                     }
-                    setStopButton()
+                    notificationHelper.setStopButton(this)
                 }
 
                 Constant.ACTION_SERVICE_STOP -> {
                     stopStopwatch()
-                    setResumeButton()
+                    notificationHelper.setResumeButton(this)
                 }
 
                 Constant.ACTION_SERVICE_CANCEL -> {
@@ -95,12 +105,12 @@ class StopwatchService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun startStopwatch(onTick: (h: String, m: String, s: String) -> Unit) {
+    private fun startStopwatch(onTick: (m: String, s: String) -> Unit) {
         currentState.value = StopwatchState.Started
         timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
-            duration = duration.plus(1.seconds)
+            duration = duration.minus(1.seconds)
             updateTimeUnits()
-            onTick(hours.value, minutes.value, seconds.value)
+            onTick(minutes.value, seconds.value)
         }
     }
 
@@ -118,83 +128,34 @@ class StopwatchService : Service() {
     }
 
     private fun updateTimeUnits() {
-        duration.toComponents { hours, minutes, seconds, _ ->
-            this@StopwatchService.hours.value = hours.toInt().pad()
-            this@StopwatchService.minutes.value = minutes.pad()
-            this@StopwatchService.seconds.value = seconds.pad()
+        duration.toComponents { minutes, seconds, _ ->
+            this.minutes.value = minutes.toInt().pad()
+            this.seconds.value = seconds.pad()
         }
     }
 
-    private fun startForegroundService() {
-        createNotificationChannel()
-        startForeground(Constant.NOTIFICATION_ID, notificationBuilder.build())
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun stopForegroundService() {
-        GlobalScope.launch(Dispatchers.Default) {
-            notificationManager.cancel(Constant.NOTIFICATION_ID)
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
-        }
-    }
-
-    private fun createNotificationChannel() {
-        val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel(
-                Constant.NOTIFICATION_CHANNEL_ID,
-                Constant.NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_LOW
-            )
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-        notificationManager.createNotificationChannel(channel)
-    }
-
-    private fun updateNotification(hours: String, minutes: String, seconds: String) {
-        notificationManager.notify(
-            Constant.NOTIFICATION_ID,
-            notificationBuilder.setContentTitle(
-                formatTime(
-                    hours = hours,
-                    minutes = minutes,
-                    seconds = seconds,
-                )
-            ).build()
-        )
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun setStopButton() {
-        notificationBuilder.mActions.removeAt(1)
-        notificationBuilder.mActions.add(
-            1,
-            NotificationCompat.Action(
-                0,
-                "Stop",
-                ServiceHelper.stopPendingIntent(this)
-            )
-        )
-        notificationManager.notify(Constant.NOTIFICATION_ID, notificationBuilder.build())
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun setResumeButton() {
-        notificationBuilder.mActions.removeAt(1)
-        notificationBuilder.mActions.add(
-            1,
-            NotificationCompat.Action(
-                0,
-                "Resume",
-                ServiceHelper.resumePendingIntent(this)
-            )
-        )
-        notificationManager.notify(Constant.NOTIFICATION_ID, notificationBuilder.build())
-    }
 
     inner class StopwatchBinder : Binder() {
         fun getService(): StopwatchService = this@StopwatchService
+    }
+
+    private fun createDuration(minutes: Int, seconds: Int): Duration {
+        val totalSeconds = minutes * 60 + seconds
+        return totalSeconds.seconds
+    }
+
+    private fun startForegroundService() {
+        notificationHelper.createNotificationChannel()
+        startForeground(Constant.NOTIFICATION_ID, notificationHelper.buildNotification())
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun stopForegroundService() {
+        GlobalScope.launch(Dispatchers.Default) {
+            notificationHelper.cancelNotification()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
     }
 }
 

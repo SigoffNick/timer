@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timer.pages.home_page.view_models.TimerState
 import com.example.timer.ui.timer_page.widgets.PlayButton
-import com.example.timer.ui.timer_page.widgets.ProgramDescription
 import com.example.timer.ui.timer_page.widgets.RoundCounter
 import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher
 
@@ -59,15 +58,12 @@ val context = LocalContext.current
                     items = viewModel.programsList,
                     selectedItem = viewModel.selectedItem.value,
                     onItemSelected = { viewModel.onItemSelected(it) })
-                ProgramDescription(selectedProgram = viewModel.selectedItem.value)
                 Spacer(modifier = Modifier.weight(1f))
                 Row(
                     modifier = Modifier.weight(weight = 8f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ShowTimeText(viewModel.hours, "Hour", fontSize.floatValue)
-                    ShowDot(fontSize = fontSize.floatValue)
                     ShowTimeText(viewModel.minutes, "Minute", fontSize.floatValue)
                     ShowDot(fontSize = fontSize.floatValue)
                     ShowTimeText(viewModel.seconds, "Second", fontSize.floatValue)
