@@ -1,3 +1,4 @@
+// MainActivity.kt
 package com.example.timer
 
 import android.content.ComponentName
@@ -11,7 +12,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,12 +19,14 @@ import com.example.timer.service.StopwatchService
 import com.example.timer.core.theme.StopWatchTheme
 import com.example.timer.pages.home_page.view_models.HomePageViewModel
 import com.example.timer.ui.timer_page.TimerPage
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var isBound by mutableStateOf(false)
 
-    @OptIn(ExperimentalAnimationApi::class)
     private lateinit var stopwatchService: StopwatchService
 
     private val connection = object : ServiceConnection {
@@ -79,6 +81,3 @@ class MainActivity : ComponentActivity() {
         isBound = false
     }
 }
-
-
-

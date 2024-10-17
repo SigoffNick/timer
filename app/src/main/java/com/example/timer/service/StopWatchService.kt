@@ -1,16 +1,10 @@
 package com.example.timer.service
 
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Build
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.NotificationCompat
 import com.example.timer.core.Constant
-import com.example.timer.core.formatTime
 import com.example.timer.core.pad
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -18,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.Timer
-import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -30,21 +23,46 @@ import kotlin.time.Duration.Companion.seconds
 @AndroidEntryPoint
 class StopwatchService : Service() {
 
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
+    /**
+     * The NotificationHelper class is used to create and manage notifications.
+     */
+    private val notificationHelper: NotificationHelper = NotificationHelper()
 
+    /**
+     * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
+     */
     private val binder = StopwatchBinder()
 
+    /**
+     * The duration variable is used to store the current duration of the stopwatch.
+     */
     private var duration: Duration = Duration.ZERO
+
+    /**
+     * The timer variable is used to create a Timer object that will be used to update the stopwatch every second.
+     */
     private lateinit var timer: Timer
 
+    /**
+     * The minutes and seconds variables are used to store the current minutes and seconds of the stopwatch.
+     */
     var minutes = mutableStateOf("00")
         private set
+
+    /**
+     * The seconds variable is used to store the current seconds of the stopwatch.
+     */
     var seconds = mutableStateOf("00")
         private set
-    var currentState = mutableStateOf(StopwatchState.Idle)
-        private set
 
+    /**
+     * The currentState variable is used to store the current state of the stopwatch.
+     */
+    private var currentState = mutableStateOf(StopwatchState.Idle)
+
+    /**
+     * The onBind method is used to bind the StopwatchService to the MainActivity.
+     */
     override fun onBind(intent: Intent?) = binder
 
     /**
@@ -105,6 +123,9 @@ class StopwatchService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    /**
+     * The startStopwatch method is used to start the stopwatch.
+     */
     private fun startStopwatch(onTick: (m: String, s: String) -> Unit) {
         currentState.value = StopwatchState.Started
         timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
@@ -114,6 +135,9 @@ class StopwatchService : Service() {
         }
     }
 
+    /**
+     * The stopStopwatch method is used to stop the stopwatch.
+     */
     private fun stopStopwatch() {
         if (this::timer.isInitialized) {
             timer.cancel()
@@ -121,6 +145,9 @@ class StopwatchService : Service() {
         currentState.value = StopwatchState.Stopped
     }
 
+    /**
+     * The cancelStopwatch method is used to cancel the stopwatch.
+     */
     private fun cancelStopwatch() {
         duration = Duration.ZERO
         currentState.value = StopwatchState.Idle

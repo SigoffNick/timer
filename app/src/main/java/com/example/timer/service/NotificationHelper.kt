@@ -10,6 +10,9 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.timer.core.Constant
 import com.example.timer.core.formatTime
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ServiceComponent
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
