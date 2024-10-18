@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Binder
 import androidx.compose.runtime.mutableStateOf
 import com.example.timer.core.Constant
+import com.example.timer.core.enums.ServiceAction
 import com.example.timer.core.enums.StopwatchState
 import com.example.timer.core.pad
 import dagger.hilt.android.AndroidEntryPoint
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.Timer
+import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -27,7 +29,8 @@ class StopwatchService : Service() {
     /**
      * The NotificationHelper class is used to create and manage notifications.
      */
-    private val notificationHelper: NotificationHelper = NotificationHelper()
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
 
     /**
      * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
@@ -59,7 +62,7 @@ class StopwatchService : Service() {
     /**
      * The currentState variable is used to store the current state of the stopwatch.
      */
-    private var currentState = mutableStateOf(StopwatchState.Idle)
+    var currentState = mutableStateOf(StopwatchState.Idle)
 
     /**
      * The onBind method is used to bind the StopwatchService to the MainActivity.
@@ -71,8 +74,62 @@ class StopwatchService : Service() {
      * This method handles the incoming intents and performs actions based on the intent's action or extra data.
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Check the intent's extra data to determine the action to be performed.
-        when (intent?.getStringExtra(Constant.STOPWATCH_STATE)) {
+        val stopwatchState = intent?.getStringExtra(STOPWATCH_STATE)
+        if (stopwatchState != null) {
+            handleStopwatchState(stopwatchState)
+        }
+
+        val initialTime = intent?.getStringExtra(ServiceHelper.INITIAL_TIME)
+        if (initialTime != null) {
+            handleInitialTime(initialTime)
+        }
+        val action = intent?.action
+        if (action != null) {
+            handleAction(action)
+        }
+
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    /**
+     * The handleAction method is used to handle the action based on the given action.
+     */
+    private fun handleAction(action: String) {
+        when (action) {
+            ServiceAction.ACTION_SERVICE_START.name -> {
+                startForegroundService()
+                startStopwatch { minutes, seconds ->
+                    notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
+                }
+                notificationHelper.setStopButton(this)
+            }
+
+            ServiceAction.ACTION_SERVICE_STOP.name -> {
+                stopStopwatch()
+                notificationHelper.setResumeButton(this)
+            }
+
+            ServiceAction.ACTION_SERVICE_CANCEL.name -> {
+                stopForegroundService()
+                stopStopwatch()
+                cancelStopwatch()
+            }
+        }
+    }
+
+    /**
+     * The handleInitialTime method is used to handle the initial time of the stopwatch.
+     */
+    private fun handleInitialTime(initialTime: String) {
+        val (m, s) = initialTime.split(":")
+        duration = createDuration(m.toInt(), s.toInt())
+    }
+
+    /**
+     * The handleStopwatchState method is used to handle the stopwatch state based on the given state.
+     */
+    private fun handleStopwatchState(stopwatchState: String) {
+        when (stopwatchState) {
             StopwatchState.Started.name -> {
                 notificationHelper.setStopButton(this)
                 startForegroundService()
@@ -92,36 +149,6 @@ class StopwatchService : Service() {
                 cancelStopwatch()
             }
         }
-
-        val initialTime = intent?.getStringExtra(Constant.INITIAL_TIME)
-        if (initialTime != null) {
-            val (m, s) = initialTime.split(":")
-            duration = createDuration(m.toInt(), s.toInt())
-        }
-
-        intent?.action.let {
-            when (it) {
-                Constant.ACTION_SERVICE_START -> {
-                    startForegroundService()
-                    startStopwatch { minutes, seconds ->
-                        notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
-                    }
-                    notificationHelper.setStopButton(this)
-                }
-
-                Constant.ACTION_SERVICE_STOP -> {
-                    stopStopwatch()
-                    notificationHelper.setResumeButton(this)
-                }
-
-                Constant.ACTION_SERVICE_CANCEL -> {
-                    stopForegroundService()
-                    stopStopwatch()
-                    cancelStopwatch()
-                }
-            }
-        }
-        return super.onStartCommand(intent, flags, startId)
     }
 
     /**
@@ -198,5 +225,9 @@ class StopwatchService : Service() {
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
+    }
+
+    companion object {
+        const val STOPWATCH_STATE = "STOPWATCH_STATE"
     }
 }

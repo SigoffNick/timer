@@ -52,6 +52,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    var viewModel: HomePageViewModel? = null
+
     /**
      * The onStart function is called when the MainActivity is started.
      * The function binds the MainActivity to the StopwatchService.
@@ -73,8 +75,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             StopWatchTheme {
                 if (isBound) {
-                    val viewModel = HomePageViewModel(stopwatchService = stopwatchService)
-                    TimerPage(viewModel = viewModel)
+                    if (viewModel == null) {
+                        viewModel = HomePageViewModel(stopwatchService = stopwatchService)
+                    }
+                    TimerPage(viewModel = viewModel!!)
                 }
             }
         }

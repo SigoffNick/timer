@@ -1,6 +1,6 @@
 package com.example.timer.core.enums
 
-enum class TimerState {
+enum class CurrentProgramState {
     WORK,
     REST,
     READY_TO_START,

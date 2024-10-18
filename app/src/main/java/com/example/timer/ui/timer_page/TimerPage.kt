@@ -24,7 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.timer.core.enums.TimerState
+import com.example.timer.core.enums.CurrentProgramState
 import com.example.timer.ui.timer_page.widgets.PlayButton
 import com.example.timer.ui.timer_page.widgets.RoundCounter
 import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher
@@ -46,7 +46,7 @@ val context = LocalContext.current
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = getContainerColor(viewModel.currentTimerState.value)
+            containerColor = getContainerColor(viewModel.currentProgramState.value)
         ) { innerPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,7 +56,7 @@ val context = LocalContext.current
             ) {
                 TrainingTypeSwitcher(
                     items = viewModel.programsList,
-                    selectedItem = viewModel.selectedItem.value,
+                    selectedItem = viewModel.selectedProgram.value,
                     onItemSelected = { viewModel.onItemSelected(it) })
                 Spacer(modifier = Modifier.weight(1f))
                 Row(
@@ -70,36 +70,37 @@ val context = LocalContext.current
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 RoundCounter(
-                    totalRounds = viewModel.selectedItem.value.numberOfRounds,
+                    totalRounds = viewModel.selectedProgram.value.numberOfRounds,
                     currentRound = viewModel.currentRound.intValue
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 PlayButton(
-                    onStop = {viewModel.cancelTimer(context = context) },
-                    onSwitch = {viewModel.startTimer(context = context) },
-                    isActive = false,
-                    timerState = viewModel.currentTimerState.value
+                    onStop = {viewModel.stopTimer(context = context) },
+                    onStart = {viewModel.startTimer(context = context) },
+                    onCancel = {viewModel.cancelTimer(context = context) },
+                    isRunning = viewModel.isRunning,
+                    currentProgramState = viewModel.currentProgramState.value
                 )
             }
         }
     }
 }
 
-fun getContainerColor(timerState: TimerState): Color {
+fun getContainerColor(timerState: CurrentProgramState): Color {
     return when (timerState) {
-        TimerState.WORK -> Color.Green
-        TimerState.REST -> Color.Red
-        TimerState.READY_TO_START -> Color.Black
-        TimerState.PREPARATION -> Color.Black
+        CurrentProgramState.WORK -> Color.Green
+        CurrentProgramState.REST -> Color.Red
+        CurrentProgramState.READY_TO_START -> Color.Black
+        CurrentProgramState.PREPARATION -> Color.Black
     }
 }
 
-fun selectBackgroundColor(timerState: TimerState): Color {
+fun selectBackgroundColor(timerState: CurrentProgramState): Color {
     return when (timerState) {
-        TimerState.WORK -> Color.Cyan
-        TimerState.REST -> Color.Green
-        TimerState.READY_TO_START -> Color.White
-        TimerState.PREPARATION -> Color.White
+        CurrentProgramState.WORK -> Color.Cyan
+        CurrentProgramState.REST -> Color.Green
+        CurrentProgramState.READY_TO_START -> Color.White
+        CurrentProgramState.PREPARATION -> Color.White
     }
 }
 

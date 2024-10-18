@@ -22,19 +22,17 @@ import javax.inject.Inject
 /**
  * The NotificationHelper class is used to create and manage notifications.
  */
-class NotificationHelper {
-    /**
-     * The notificationManager variable is used to store the NotificationManager instance.
-     */
-    @Inject
-     lateinit var notificationManager: NotificationManager
 
+class NotificationHelper @Inject constructor(
     /**
-     * The notificationBuilder variable is used to store the NotificationCompat.Builder instance.
+     * The notificationManager variable is used to manage notifications.
      */
-    @Inject
-     lateinit var notificationBuilder: NotificationCompat.Builder
-
+    private val notificationManager: NotificationManager,
+    /**
+     * The notificationBuilder variable is used to build notifications.
+     */
+    private val notificationBuilder: NotificationCompat.Builder
+) {
     /**
      * The createNotificationChannel function is used to create a notification channel.
      * This function is only called on devices running Android Oreo (API 26) or higher.
@@ -58,7 +56,7 @@ class NotificationHelper {
      * The notification is built using the notificationBuilder instance.
      */
     fun buildNotification(): Notification {
-       return  notificationBuilder.build()
+        return notificationBuilder.build()
     }
 
     /**

@@ -13,18 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.timer.core.enums.TimerState
+import com.example.timer.core.enums.CurrentProgramState
 
 @Composable
 fun PlayButton(
-    onSwitch: () -> Unit,
+    onStart: () -> Unit,
+    onCancel: () -> Unit,
     onStop: () -> Unit,
-    isActive: Boolean,
-    timerState: TimerState,
+    currentProgramState: CurrentProgramState,
+    isRunning: Boolean,
     modifier: Modifier = Modifier
 ) {
 
-    val isSplit = !isActive && timerState != TimerState.READY_TO_START
+    val isSplit = currentProgramState != CurrentProgramState.READY_TO_START
 
     Box(modifier = modifier) {
         AnimatedVisibility(
@@ -33,13 +34,13 @@ fun PlayButton(
             exit = fadeOut(animationSpec = tween(300))
         ) {
             Button(
-                onClick = onSwitch,
+                onClick = onStart,
                 modifier = Modifier.size(80.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White)
             ) {
                 Icon(
                     modifier = Modifier.size(40.dp),
-                    imageVector = if (isActive) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                    imageVector = if (isRunning) Icons.Filled.Pause else  Icons.Filled.PlayArrow ,
                     contentDescription = "Play Icon",
                     tint = Color.Black
                 )
@@ -53,7 +54,7 @@ fun PlayButton(
         ) {
             Row {
                 Button(
-                    onClick = onSwitch,
+                    onClick = onStop,
                     modifier = Modifier.size(80.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                 ) {
@@ -66,7 +67,7 @@ fun PlayButton(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = onStop,
+                    onClick = onCancel,
                     modifier = Modifier.size(80.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                 ) {
@@ -86,9 +87,10 @@ fun PlayButton(
 @Composable
 fun PlayButtonPreview() {
     PlayButton(
-        onSwitch = {},
+        onStart = {},
+        onCancel = {},
         onStop = {},
-        isActive = true,
-        timerState = TimerState.WORK
+        isRunning = true,
+        currentProgramState = CurrentProgramState.WORK
     )
 }
