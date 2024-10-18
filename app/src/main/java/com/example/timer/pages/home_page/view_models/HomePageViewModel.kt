@@ -1,21 +1,19 @@
 package com.example.timer.pages.home_page.view_models
 
 import android.content.Context
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import com.example.timer.core.Constant
+import com.example.timer.core.enums.TimerState
 import com.example.timer.core.training_programs.AmateurBoxingProgram
 import com.example.timer.core.training_programs.BoxingProgram
 import com.example.timer.core.training_programs.ClassicBoxingProgram
 import com.example.timer.core.training_programs.TestingBoxingProgram
 import com.example.timer.service.ServiceHelper
 import com.example.timer.service.StopwatchService
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
     val programsList = listOf(

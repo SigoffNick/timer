@@ -5,12 +5,26 @@ import android.content.Context
 import android.content.Intent
 import com.example.timer.core.Constant
 import com.example.timer.MainActivity
+import com.example.timer.core.enums.StopwatchState
 
-
+/**
+ * This class provides helper methods to create pending intents for the notification actions.
+ * Pending intents are used to trigger actions from the notification.
+ * The pending intents are created with the context and the action to be performed.
+ * The pending intents are used to start the MainActivity, stop the service, resume the service, and cancel the service.
+ */
 object ServiceHelper {
 
+    /**
+     * The FLAG variable is used to specify the flags for the pending intents.
+     */
     private const val FLAG = PendingIntent.FLAG_IMMUTABLE
 
+    /**
+     * The clickPendingIntent function is used to create a pending intent to start the MainActivity.
+     * @param context: The context from which the pending intent is created.
+     * @return A pending intent to start the MainActivity.
+     */
     fun clickPendingIntent(context: Context): PendingIntent {
         val clickIntent = Intent(context, MainActivity::class.java).apply {
             putExtra(Constant.STOPWATCH_STATE, StopwatchState.Started.name)
@@ -20,6 +34,11 @@ object ServiceHelper {
         )
     }
 
+    /**
+     * The stopPendingIntent function is used to create a pending intent to stop the service.
+     * @param context: The context from which the pending intent is created.
+     * @return A pending intent to stop the service.
+     */
     fun stopPendingIntent(context: Context): PendingIntent {
         val stopIntent = Intent(context, StopwatchService::class.java).apply {
             putExtra(Constant.STOPWATCH_STATE, StopwatchState.Stopped.name)
@@ -29,6 +48,11 @@ object ServiceHelper {
         )
     }
 
+    /**
+     * The resumePendingIntent function is used to create a pending intent to resume the service.
+     * @param context: The context from which the pending intent is created.
+     * @return A pending intent to resume the service.
+     */
     fun resumePendingIntent(context: Context): PendingIntent {
         val resumeIntent = Intent(context, StopwatchService::class.java).apply {
             putExtra(Constant.STOPWATCH_STATE, StopwatchState.Started.name)
@@ -38,6 +62,11 @@ object ServiceHelper {
         )
     }
 
+    /**
+     * The cancelPendingIntent function is used to create a pending intent to cancel the service.
+     * @param context: The context from which the pending intent is created.
+     * @return A pending intent to cancel the service.
+     */
     fun cancelPendingIntent(context: Context): PendingIntent {
         val cancelIntent = Intent(context, StopwatchService::class.java).apply {
             putExtra(Constant.STOPWATCH_STATE, StopwatchState.Canceled.name)
@@ -58,7 +87,12 @@ object ServiceHelper {
     @Param context: The context from which the service is being started.
     @Param action: A string representing the action to be performed by the service
      */
-    fun triggerForegroundService(context: Context, action: String, minutes: Int = 0, seconds: Int = 0) {
+    fun triggerForegroundService(
+        context: Context,
+        action: String,
+        minutes: Int = 0,
+        seconds: Int = 0
+    ) {
         // An Intent is created with the context and the StopwatchService class. This intent is used to specify the service to be started.
         // The startService method of the context is called with the intent, which starts the StopwatchService.
         Intent(context, StopwatchService::class.java).apply {

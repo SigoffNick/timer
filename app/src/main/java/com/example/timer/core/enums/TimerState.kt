@@ -1,4 +1,4 @@
-package com.example.timer.pages.home_page.view_models
+package com.example.timer.core.enums
 
 enum class TimerState {
     WORK,

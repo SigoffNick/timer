@@ -19,13 +19,27 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * The NotificationHelper class is used to create and manage notifications.
+ */
 class NotificationHelper {
+    /**
+     * The notificationManager variable is used to store the NotificationManager instance.
+     */
     @Inject
      lateinit var notificationManager: NotificationManager
 
+    /**
+     * The notificationBuilder variable is used to store the NotificationCompat.Builder instance.
+     */
     @Inject
      lateinit var notificationBuilder: NotificationCompat.Builder
 
+    /**
+     * The createNotificationChannel function is used to create a notification channel.
+     * This function is only called on devices running Android Oreo (API 26) or higher.
+     * The notification channel is used to group notifications together and provide a way to manage them.
+     */
     fun createNotificationChannel() {
         val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel(
@@ -39,14 +53,26 @@ class NotificationHelper {
         notificationManager.createNotificationChannel(channel)
     }
 
+    /**
+     * The buildNotification function is used to build the notification.
+     * The notification is built using the notificationBuilder instance.
+     */
     fun buildNotification(): Notification {
        return  notificationBuilder.build()
     }
 
+    /**
+     * The startForeground function is used to start the service in the foreground.
+     * This function is used to display the notification to the user.
+     */
     fun cancelNotification() {
         notificationManager.cancel(Constant.NOTIFICATION_ID)
     }
 
+    /**
+     * The updateNotification function is used to update the notification's content.
+     * The function takes the minutes and seconds as input and updates the notification's content title.
+     */
     fun updateNotification(minutes: String, seconds: String) {
         notificationManager.notify(
             Constant.NOTIFICATION_ID,

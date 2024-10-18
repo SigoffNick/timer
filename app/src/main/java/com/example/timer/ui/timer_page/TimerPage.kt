@@ -24,7 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.timer.pages.home_page.view_models.TimerState
+import com.example.timer.core.enums.TimerState
 import com.example.timer.ui.timer_page.widgets.PlayButton
 import com.example.timer.ui.timer_page.widgets.RoundCounter
 import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher

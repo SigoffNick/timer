@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Binder
 import androidx.compose.runtime.mutableStateOf
 import com.example.timer.core.Constant
+import com.example.timer.core.enums.StopwatchState
 import com.example.timer.core.pad
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -154,6 +155,9 @@ class StopwatchService : Service() {
         updateTimeUnits()
     }
 
+    /**
+     * The updateTimeUnits method is used to update the minutes and seconds variables based on the current duration.
+     */
     private fun updateTimeUnits() {
         duration.toComponents { minutes, seconds, _ ->
             this.minutes.value = minutes.toInt().pad()
@@ -161,21 +165,32 @@ class StopwatchService : Service() {
         }
     }
 
-
+    /**
+     * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
+     */
     inner class StopwatchBinder : Binder() {
         fun getService(): StopwatchService = this@StopwatchService
     }
 
+    /**
+     * The createDuration method is used to create a Duration object from the given minutes and seconds.
+     */
     private fun createDuration(minutes: Int, seconds: Int): Duration {
         val totalSeconds = minutes * 60 + seconds
         return totalSeconds.seconds
     }
 
+    /**
+     * The startForegroundService method is used to start the service in the foreground.
+     */
     private fun startForegroundService() {
         notificationHelper.createNotificationChannel()
         startForeground(Constant.NOTIFICATION_ID, notificationHelper.buildNotification())
     }
 
+    /**
+     * The stopForegroundService method is used to stop the service in the foreground.
+     */
     @OptIn(DelicateCoroutinesApi::class)
     fun stopForegroundService() {
         GlobalScope.launch(Dispatchers.Default) {
@@ -184,11 +199,4 @@ class StopwatchService : Service() {
             stopSelf()
         }
     }
-}
-
-enum class StopwatchState {
-    Idle,
-    Started,
-    Stopped,
-    Canceled
 }
