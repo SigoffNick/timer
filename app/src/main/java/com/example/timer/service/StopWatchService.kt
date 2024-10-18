@@ -79,13 +79,14 @@ class StopwatchService : Service() {
             handleStopwatchState(stopwatchState)
         }
 
-        val initialTime = intent?.getStringExtra(ServiceHelper.INITIAL_TIME)
-        if (initialTime != null) {
-            handleInitialTime(initialTime)
-        }
         val action = intent?.action
         if (action != null) {
             handleAction(action)
+        }
+
+        val initialTime = intent?.getStringExtra(ServiceHelper.INITIAL_TIME)
+        if (initialTime != null) {
+            handleInitialTime(initialTime)
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -111,7 +112,6 @@ class StopwatchService : Service() {
 
             ServiceAction.ACTION_SERVICE_CANCEL.name -> {
                 stopForegroundService()
-                stopStopwatch()
                 cancelStopwatch()
             }
         }
@@ -121,6 +121,9 @@ class StopwatchService : Service() {
      * The handleInitialTime method is used to handle the initial time of the stopwatch.
      */
     private fun handleInitialTime(initialTime: String) {
+        if (currentState.value == StopwatchState.Stopped) {
+            return
+        }
         val (m, s) = initialTime.split(":")
         duration = createDuration(m.toInt(), s.toInt())
     }
@@ -177,7 +180,9 @@ class StopwatchService : Service() {
      * The cancelStopwatch method is used to cancel the stopwatch.
      */
     private fun cancelStopwatch() {
-        duration = Duration.ZERO
+        if (this::timer.isInitialized) {
+            timer.cancel()
+        }
         currentState.value = StopwatchState.Idle
         updateTimeUnits()
     }

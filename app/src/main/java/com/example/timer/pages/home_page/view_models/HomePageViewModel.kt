@@ -29,8 +29,7 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
 
     val minutes by stopwatchService.minutes
     val seconds by stopwatchService.seconds
-
-    val isRunning = stopwatchService.currentState.value != StopwatchState.Idle
+    val currentStopwatchServiceState by stopwatchService.currentState
 
     private var programStep = 0;
 
@@ -56,11 +55,13 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
         ServiceHelper.triggerForegroundService(
             context = context,
             action = ServiceAction.ACTION_SERVICE_STOP,
-            seconds = _selectedProgram.value.programFlow[programStep].inWholeSeconds.toInt()
         )
     }
 
     fun cancelTimer(context: Context) {
+        programStep = 0
+        currentRound.intValue = 0
+        currentProgramState.value = CurrentProgramState.READY_TO_START
         ServiceHelper.triggerForegroundService(
             context = context,
             action = ServiceAction.ACTION_SERVICE_CANCEL,

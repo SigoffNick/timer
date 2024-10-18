@@ -1,4 +1,5 @@
 package com.example.timer.ui.timer_page
+
 import androidx.compose.foundation.layout.Arrangement
 import com.example.timer.pages.home_page.view_models.HomePageViewModel
 
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timer.core.enums.CurrentProgramState
+import com.example.timer.core.enums.StopwatchState
 import com.example.timer.ui.timer_page.widgets.PlayButton
 import com.example.timer.ui.timer_page.widgets.RoundCounter
 import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher
@@ -32,7 +34,7 @@ import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher
 
 @Composable
 fun TimerPage(viewModel: HomePageViewModel) {
-val context = LocalContext.current
+    val context = LocalContext.current
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
     val fontSize = rememberSaveable(key = screenWidthDp.toString()) {
         mutableFloatStateOf(screenWidthDp * 0.18f)
@@ -75,10 +77,10 @@ val context = LocalContext.current
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 PlayButton(
-                    onStop = {viewModel.stopTimer(context = context) },
-                    onStart = {viewModel.startTimer(context = context) },
-                    onCancel = {viewModel.cancelTimer(context = context) },
-                    isRunning = viewModel.isRunning,
+                    onStop = { viewModel.stopTimer(context = context) },
+                    onStart = { viewModel.startTimer(context = context) },
+                    onCancel = { viewModel.cancelTimer(context = context) },
+                    isRunning = viewModel.currentStopwatchServiceState != StopwatchState.Idle && viewModel.currentStopwatchServiceState != StopwatchState.Stopped,
                     currentProgramState = viewModel.currentProgramState.value
                 )
             }

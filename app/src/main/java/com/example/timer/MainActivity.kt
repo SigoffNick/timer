@@ -20,7 +20,6 @@ import com.example.timer.core.theme.StopWatchTheme
 import com.example.timer.pages.home_page.view_models.HomePageViewModel
 import com.example.timer.ui.timer_page.TimerPage
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 /**
  * The MainActivity class is the entry point of the application.
@@ -52,7 +51,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    var viewModel: HomePageViewModel? = null
+    /**
+     * The viewModel variable is used to store the HomePageViewModel instance.
+     * The HomePageViewModel is used to manage the data for the TimerPage.
+     */
+    private var viewModel: HomePageViewModel? = null
 
     /**
      * The onStart function is called when the MainActivity is started.

@@ -54,13 +54,13 @@ fun PlayButton(
         ) {
             Row {
                 Button(
-                    onClick = onStop,
+                    onClick = if (isRunning) onStop else onStart,
                     modifier = Modifier.size(80.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White)
                 ) {
                     Icon(
                         modifier = Modifier.size(40.dp),
-                        imageVector = Icons.Filled.PlayArrow,
+                        imageVector = if (isRunning) Icons.Filled.Pause else  Icons.Filled.PlayArrow ,
                         contentDescription = "Play Icon",
                         tint = Color.Black
                     )
