@@ -38,21 +38,6 @@ class StopwatchService : Service() {
     val selectedProgram = mutableStateOf(Constant.PROGRAMS_LIST[0])
 
     /**
-     * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
-     */
-    private val binder = StopwatchBinder()
-
-    /**
-     * The duration variable is used to store the current duration of the stopwatch.
-     */
-    private var duration: Duration = Duration.ZERO
-
-    /**
-     * The timer variable is used to create a Timer object that will be used to update the stopwatch every second.
-     */
-    private lateinit var timer: Timer
-
-    /**
      * The minutes and seconds variables are used to store the current minutes and seconds of the stopwatch.
      */
     var minutes = mutableStateOf("00")
@@ -68,6 +53,25 @@ class StopwatchService : Service() {
      * The currentState variable is used to store the current state of the stopwatch.
      */
     var currentState = mutableStateOf(StopwatchState.Idle)
+
+    /**
+     * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
+     */
+    private val binder = StopwatchBinder()
+
+    /**
+     * The duration variable is used to store the current duration of the stopwatch.
+     */
+    private var duration: Duration = Duration.ZERO
+
+    /**
+     * The timer variable is used to create a Timer object that will be used to update the stopwatch every second.
+     */
+    private lateinit var timer: Timer
+
+
+    private var currentStep: Int = 0
+
 
     /**
      * The onBind method is used to bind the StopwatchService to the MainActivity.
@@ -121,6 +125,7 @@ class StopwatchService : Service() {
             }
 
             ServiceAction.ACTION_SERVICE_SET.name -> {
+                duration = selectedProgram.value.programFlow[0]
                 println()
                 // handleProgramIndex()
             }
