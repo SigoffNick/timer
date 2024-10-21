@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.timer.core.Constant
 import com.example.timer.core.training_programs.BoxingProgram
 
 
@@ -25,7 +26,7 @@ import com.example.timer.core.training_programs.BoxingProgram
 fun TrainingTypeSwitcher(
     items: List<BoxingProgram>,
     selectedItem: BoxingProgram,
-    onItemSelected: (BoxingProgram) -> Unit
+    onItemSelected: (itemIndex: Int) -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -50,7 +51,7 @@ fun TrainingTypeSwitcher(
             items.forEach { item ->
                 DropdownMenuItem(
                     onClick = {
-                        onItemSelected(item)
+                        onItemSelected(Constant.PROGRAMS_LIST.indexOf(item))
                         expanded.value = false
                     },
                     text = {

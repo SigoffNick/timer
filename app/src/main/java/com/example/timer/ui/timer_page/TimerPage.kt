@@ -25,10 +25,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.timer.core.Constant
 import com.example.timer.core.enums.CurrentProgramState
 import com.example.timer.core.enums.StopwatchState
 import com.example.timer.ui.timer_page.widgets.PlayButton
-import com.example.timer.ui.timer_page.widgets.RoundCounter
 import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher
 
 
@@ -48,7 +48,7 @@ fun TimerPage(viewModel: HomePageViewModel) {
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = getContainerColor(viewModel.currentProgramState.value)
+            containerColor = getContainerColor(viewModel.currentProgramState)
         ) { innerPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,9 +57,9 @@ fun TimerPage(viewModel: HomePageViewModel) {
                     .fillMaxSize()
             ) {
                 TrainingTypeSwitcher(
-                    items = viewModel.programsList,
-                    selectedItem = viewModel.selectedProgram.value,
-                    onItemSelected = { viewModel.onItemSelected(it) })
+                    items = Constant.PROGRAMS_LIST,
+                    selectedItem = viewModel.selectedProgram,
+                    onItemSelected = { viewModel.selectProgram(it, context) })
                 Spacer(modifier = Modifier.weight(1f))
                 Row(
                     modifier = Modifier.weight(weight = 8f),
@@ -71,29 +71,29 @@ fun TimerPage(viewModel: HomePageViewModel) {
                     ShowTimeText(viewModel.seconds, "Second", fontSize.floatValue)
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                RoundCounter(
-                    totalRounds = viewModel.selectedProgram.value.numberOfRounds,
-                    currentRound = viewModel.currentRound.intValue
-                )
+//                RoundCounter(
+//                    totalRounds = viewModel.selectedProgram.value.numberOfRounds,
+//                    currentRound = viewModel.currentRound.intValue
+//                )
                 Spacer(modifier = Modifier.height(16.dp))
                 PlayButton(
                     onStop = { viewModel.stopTimer(context = context) },
                     onStart = { viewModel.startTimer(context = context) },
                     onCancel = { viewModel.cancelTimer(context = context) },
-                    isRunning = viewModel.currentStopwatchServiceState != StopwatchState.Idle && viewModel.currentStopwatchServiceState != StopwatchState.Stopped,
-                    currentProgramState = viewModel.currentProgramState.value
+                    isRunning = viewModel.currentProgramState != StopwatchState.Idle && viewModel.currentProgramState != StopwatchState.Stopped,
+                    currentProgramState = viewModel.currentProgramState
                 )
             }
         }
     }
 }
 
-fun getContainerColor(timerState: CurrentProgramState): Color {
+fun getContainerColor(timerState: StopwatchState): Color {
     return when (timerState) {
-        CurrentProgramState.WORK -> Color.Green
-        CurrentProgramState.REST -> Color.Red
-        CurrentProgramState.READY_TO_START -> Color.Black
-        CurrentProgramState.PREPARATION -> Color.Black
+        StopwatchState.Started -> Color.Green
+        StopwatchState.Canceled -> Color.Red
+        StopwatchState.Idle -> Color.Black
+        StopwatchState.Stopped -> Color.Black
     }
 }
 

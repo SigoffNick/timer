@@ -33,6 +33,11 @@ class StopwatchService : Service() {
     lateinit var notificationHelper: NotificationHelper
 
     /**
+     * The _selectedProgram variable is used to store the selected training program.
+     */
+    val selectedProgram = mutableStateOf(Constant.PROGRAMS_LIST[0])
+
+    /**
      * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
      */
     private val binder = StopwatchBinder()
@@ -79,14 +84,14 @@ class StopwatchService : Service() {
             handleStopwatchState(stopwatchState)
         }
 
+        val programIndex = intent?.getStringExtra(ServiceHelper.SET_PROGRAM)
+        if (programIndex != null) {
+            handleProgramIndex(programIndex)
+        }
+
         val action = intent?.action
         if (action != null) {
             handleAction(action)
-        }
-
-        val initialTime = intent?.getStringExtra(ServiceHelper.INITIAL_TIME)
-        if (initialTime != null) {
-            handleInitialTime(initialTime)
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -114,18 +119,17 @@ class StopwatchService : Service() {
                 stopForegroundService()
                 cancelStopwatch()
             }
+
+            ServiceAction.ACTION_SERVICE_SET.name -> {
+                println()
+                // handleProgramIndex()
+            }
         }
     }
 
-    /**
-     * The handleInitialTime method is used to handle the initial time of the stopwatch.
-     */
-    private fun handleInitialTime(initialTime: String) {
-        if (currentState.value == StopwatchState.Stopped) {
-            return
-        }
-        val (m, s) = initialTime.split(":")
-        duration = createDuration(m.toInt(), s.toInt())
+    private fun handleProgramIndex(initialTime: String) {
+        selectedProgram.value = Constant.PROGRAMS_LIST[initialTime.toInt()]
+        // duration = createDuration(m.toInt(), s.toInt())
     }
 
     /**

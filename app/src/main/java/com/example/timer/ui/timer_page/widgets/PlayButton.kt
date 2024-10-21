@@ -14,18 +14,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.timer.core.enums.CurrentProgramState
+import com.example.timer.core.enums.StopwatchState
 
 @Composable
 fun PlayButton(
     onStart: () -> Unit,
     onCancel: () -> Unit,
     onStop: () -> Unit,
-    currentProgramState: CurrentProgramState,
+    currentProgramState: StopwatchState,
     isRunning: Boolean,
     modifier: Modifier = Modifier
 ) {
 
-    val isSplit = currentProgramState != CurrentProgramState.READY_TO_START
+    val isSplit = currentProgramState != StopwatchState.Idle
 
     Box(modifier = modifier) {
         AnimatedVisibility(
@@ -91,6 +92,6 @@ fun PlayButtonPreview() {
         onCancel = {},
         onStop = {},
         isRunning = true,
-        currentProgramState = CurrentProgramState.WORK
+        currentProgramState = StopwatchState.Started
     )
 }

@@ -7,6 +7,7 @@ import com.example.timer.core.Constant
 import com.example.timer.MainActivity
 import com.example.timer.core.enums.ServiceAction
 import com.example.timer.core.enums.StopwatchState
+import com.example.timer.core.training_programs.AmateurBoxingProgram
 
 /**
  * This class provides helper methods to create pending intents for the notification actions.
@@ -17,9 +18,9 @@ import com.example.timer.core.enums.StopwatchState
 object ServiceHelper {
 
     /**
-     * The INITIAL_TIME variable is used to pass the initial time to the service.
+     * The SET_PROGRAM variable is used to specify the action to set the program in the service.
      */
-    const val INITIAL_TIME = "INITIAL_TIME"
+    const val SET_PROGRAM = "SET_PROGRAM"
 
     /**
      * The FLAG variable is used to specify the flags for the pending intents.
@@ -96,14 +97,13 @@ object ServiceHelper {
     fun triggerForegroundService(
         context: Context,
         action: ServiceAction,
-        minutes: Int = 0,
-        seconds: Int = 0
+        programIndex: Int? = null
     ) {
         // An Intent is created with the context and the StopwatchService class. This intent is used to specify the service to be started.
         // The startService method of the context is called with the intent, which starts the StopwatchService.
         Intent(context, StopwatchService::class.java).apply {
             this.action = action.name
-            putExtra(INITIAL_TIME, "$minutes:$seconds")
+            putExtra(SET_PROGRAM, programIndex?.toString())
             context.startService(this)
         }
     }

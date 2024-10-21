@@ -5,7 +5,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class ClassicBoxingProgram : BoxingProgram(
     numberOfRounds = 12,
-    name = "Classic Boxing",
+    name = "2",//"Classic Boxing",
     programFlow = listOf(
         10.seconds,
         3.minutes,

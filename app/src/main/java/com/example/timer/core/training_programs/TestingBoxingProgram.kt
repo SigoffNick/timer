@@ -4,7 +4,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class TestingBoxingProgram : BoxingProgram(
     numberOfRounds = 4,
-    name = "Testing Boxing",
+    name = "1",//"Testing Boxing",
     programFlow = listOf(
         10.seconds,
         5.seconds,
