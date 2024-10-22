@@ -7,11 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.timer.core.Constant
 import com.example.timer.core.enums.ServiceAction
 import com.example.timer.core.enums.StopwatchState
-import com.example.timer.core.pad
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
@@ -57,8 +57,9 @@ class StopwatchService : Service() {
      */
     private lateinit var timer: Timer
 
+    val currentStep = mutableStateOf(selectedProgram.value.programFlow[0])
 
-    private var currentStep: Int = 0
+    private var currentStepIndex: Int = 0
 
 
     /**
@@ -152,21 +153,27 @@ class StopwatchService : Service() {
     /**
      * The startStopwatch method is used to start the stopwatch.
      */
+    // TODO Can we don't use global scope
+    @OptIn(DelicateCoroutinesApi::class)
     private fun startStopwatch(onTick: (m: String, s: String) -> Unit) {
         currentState.value = StopwatchState.Started
         timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
-            if(duration.value == Duration.ZERO) {
-                currentStep++
-                if(currentStep == selectedProgram.value.programFlow.size) {
-                    stopStopwatch()
+            if (duration.value == Duration.ZERO) {
+                currentStepIndex++
+                if (currentStepIndex == selectedProgram.value.programFlow.size) {
+                    cancelStopwatch()
                     return@fixedRateTimer
                 }
-                duration.value = selectedProgram.value.programFlow[currentStep].duration
-
-            }
-            duration.value = duration.value.minus(1.seconds)
-            duration.value.toComponents { minutes, seconds, _ ->
-                onTick(minutes.toString(), seconds.toString())
+                GlobalScope.launch {
+                    delay(1000L)
+                    duration.value = selectedProgram.value.programFlow[currentStepIndex].duration
+                    currentStep.value = selectedProgram.value.programFlow[currentStepIndex]
+                }
+            } else {
+                duration.value = duration.value.minus(1.seconds)
+                duration.value.toComponents { minutes, seconds, _ ->
+                    onTick(minutes.toString(), seconds.toString())
+                }
             }
         }
     }
@@ -189,6 +196,8 @@ class StopwatchService : Service() {
             timer.cancel()
         }
         currentState.value = StopwatchState.Idle
+        currentStepIndex = 0
+        currentStep.value = selectedProgram.value.programFlow[currentStepIndex]
         resetTimer()
     }
 

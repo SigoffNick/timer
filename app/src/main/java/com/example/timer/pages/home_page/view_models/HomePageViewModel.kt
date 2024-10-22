@@ -18,6 +18,8 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
 
     val duration by stopwatchService.duration
 
+    val currentStep by stopwatchService.currentStep
+
     fun selectProgram(programIndex: Int, context: Context) {
         ServiceHelper.triggerForegroundService(
             context = context,
