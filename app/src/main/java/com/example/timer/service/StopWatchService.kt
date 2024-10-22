@@ -12,6 +12,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
@@ -25,6 +27,9 @@ import kotlin.time.Duration.Companion.seconds
  */
 @AndroidEntryPoint
 class StopwatchService : Service() {
+
+    private val _stopwatchState = MutableStateFlow(StopwatchState.Idle)
+    val stopwatchState: StateFlow<StopwatchState> get() = _stopwatchState
 
     /**
      * The NotificationHelper class is used to create and manage notifications.

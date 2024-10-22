@@ -1,19 +1,19 @@
 package com.example.timer.core.training_programs
 
+import com.example.timer.core.training_programs.amateur_boxing.AmateurBoxingWorkStep
+import com.example.timer.core.training_programs.classic_boxing.ClassicBoxingRestStep
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-class AmateurBoxingProgram : BoxingProgram(
-    numberOfRounds = 4,
+class AmateurBoxingProgram : TrainingProgram(
     name = "3",//"Amateur Boxing",
     programFlow = listOf(
-        10.seconds,
-        2.minutes,
-        1.minutes,
-        2.minutes,
-        1.minutes,
-        2.minutes,
-        1.minutes,
-        2.minutes,
+        ClassicPreparationStep(),
+        AmateurBoxingWorkStep(),
+        ClassicBoxingRestStep(),
+        AmateurBoxingWorkStep(),
+        ClassicBoxingRestStep(),
+        AmateurBoxingWorkStep(),
+        ClassicBoxingRestStep(),
     )
 )
