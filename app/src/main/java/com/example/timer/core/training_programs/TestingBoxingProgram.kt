@@ -9,7 +9,7 @@ class TestingBoxingProgram : TrainingProgram(
     programFlow = listOf(
         ClassicPreparationStep(),
         WorkStep(duration = 10.seconds),
-        RestStep(duration = 10.seconds),
+        RestStep(duration = 4.seconds),
         WorkStep(duration = 10.seconds),
     )
 )

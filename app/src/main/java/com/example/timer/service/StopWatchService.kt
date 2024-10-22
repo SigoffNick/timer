@@ -12,8 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
@@ -28,9 +26,6 @@ import kotlin.time.Duration.Companion.seconds
 @AndroidEntryPoint
 class StopwatchService : Service() {
 
-    private val _stopwatchState = MutableStateFlow(StopwatchState.Idle)
-    val stopwatchState: StateFlow<StopwatchState> get() = _stopwatchState
-
     /**
      * The NotificationHelper class is used to create and manage notifications.
      */
@@ -41,18 +36,6 @@ class StopwatchService : Service() {
      * The _selectedProgram variable is used to store the selected training program.
      */
     val selectedProgram = mutableStateOf(Constant.PROGRAMS_LIST[0])
-
-    /**
-     * The minutes and seconds variables are used to store the current minutes and seconds of the stopwatch.
-     */
-    var minutes = mutableStateOf("00")
-        private set
-
-    /**
-     * The seconds variable is used to store the current seconds of the stopwatch.
-     */
-    var seconds = mutableStateOf("00")
-        private set
 
     /**
      * The currentState variable is used to store the current state of the stopwatch.
@@ -67,7 +50,7 @@ class StopwatchService : Service() {
     /**
      * The duration variable is used to store the current duration of the stopwatch.
      */
-    private var duration: Duration = Duration.ZERO
+    var duration = mutableStateOf(selectedProgram.value.programFlow[0].duration)
 
     /**
      * The timer variable is used to create a Timer object that will be used to update the stopwatch every second.
@@ -107,42 +90,6 @@ class StopwatchService : Service() {
     }
 
     /**
-     * The handleAction method is used to handle the action based on the given action.
-     */
-    private fun handleAction(action: String) {
-        when (action) {
-            ServiceAction.ACTION_SERVICE_START.name -> {
-                startForegroundService()
-                startStopwatch { minutes, seconds ->
-                    notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
-                }
-                notificationHelper.setStopButton(this)
-            }
-
-            ServiceAction.ACTION_SERVICE_STOP.name -> {
-                stopStopwatch()
-                notificationHelper.setResumeButton(this)
-            }
-
-            ServiceAction.ACTION_SERVICE_CANCEL.name -> {
-                stopForegroundService()
-                cancelStopwatch()
-            }
-
-            ServiceAction.ACTION_SERVICE_SET.name -> {
-                duration = selectedProgram.value.programFlow[0]
-                println()
-                // handleProgramIndex()
-            }
-        }
-    }
-
-    private fun handleProgramIndex(initialTime: String) {
-        selectedProgram.value = Constant.PROGRAMS_LIST[initialTime.toInt()]
-        // duration = createDuration(m.toInt(), s.toInt())
-    }
-
-    /**
      * The handleStopwatchState method is used to handle the stopwatch state based on the given state.
      */
     private fun handleStopwatchState(stopwatchState: String) {
@@ -168,15 +115,59 @@ class StopwatchService : Service() {
         }
     }
 
+    private fun handleProgramIndex(index: String) {
+        selectedProgram.value = Constant.PROGRAMS_LIST[index.toInt()]
+        cancelStopwatch()
+    }
+
+    /**
+     * The handleAction method is used to handle the action based on the given action.
+     */
+    private fun handleAction(action: String) {
+        when (action) {
+            ServiceAction.ACTION_SERVICE_START_PROGRAM.name -> {
+                startForegroundService()
+                startStopwatch { minutes, seconds ->
+                    notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
+                }
+                notificationHelper.setStopButton(this)
+            }
+
+            ServiceAction.ACTION_SERVICE_STOP_PROGRAM.name -> {
+                stopStopwatch()
+                notificationHelper.setResumeButton(this)
+            }
+
+            ServiceAction.ACTION_SERVICE_CANCEL_PROGRAM.name -> {
+                stopForegroundService()
+                cancelStopwatch()
+            }
+
+            ServiceAction.ACTION_SERVICE_SET_PROGRAM.name -> {
+                cancelStopwatch()
+            }
+        }
+    }
+
     /**
      * The startStopwatch method is used to start the stopwatch.
      */
     private fun startStopwatch(onTick: (m: String, s: String) -> Unit) {
         currentState.value = StopwatchState.Started
         timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
-            duration = duration.minus(1.seconds)
-            updateTimeUnits()
-            onTick(minutes.value, seconds.value)
+            if(duration.value == Duration.ZERO) {
+                currentStep++
+                if(currentStep == selectedProgram.value.programFlow.size) {
+                    stopStopwatch()
+                    return@fixedRateTimer
+                }
+                duration.value = selectedProgram.value.programFlow[currentStep].duration
+
+            }
+            duration.value = duration.value.minus(1.seconds)
+            duration.value.toComponents { minutes, seconds, _ ->
+                onTick(minutes.toString(), seconds.toString())
+            }
         }
     }
 
@@ -198,17 +189,11 @@ class StopwatchService : Service() {
             timer.cancel()
         }
         currentState.value = StopwatchState.Idle
-        updateTimeUnits()
+        resetTimer()
     }
 
-    /**
-     * The updateTimeUnits method is used to update the minutes and seconds variables based on the current duration.
-     */
-    private fun updateTimeUnits() {
-        duration.toComponents { minutes, seconds, _ ->
-            this.minutes.value = minutes.toInt().pad()
-            this.seconds.value = seconds.pad()
-        }
+    private fun resetTimer() {
+        duration.value = selectedProgram.value.programFlow[0].duration
     }
 
     /**
@@ -216,14 +201,6 @@ class StopwatchService : Service() {
      */
     inner class StopwatchBinder : Binder() {
         fun getService(): StopwatchService = this@StopwatchService
-    }
-
-    /**
-     * The createDuration method is used to create a Duration object from the given minutes and seconds.
-     */
-    private fun createDuration(minutes: Int, seconds: Int): Duration {
-        val totalSeconds = minutes * 60 + seconds
-        return totalSeconds.seconds
     }
 
     /**

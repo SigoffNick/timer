@@ -66,9 +66,9 @@ fun TimerPage(viewModel: HomePageViewModel) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ShowTimeText(viewModel.minutes, "Minute", fontSize.floatValue)
+                    ShowTimeText(viewModel.duration.inWholeMinutes.toString(), "Minute", fontSize.floatValue)
                     ShowDot(fontSize = fontSize.floatValue)
-                    ShowTimeText(viewModel.seconds, "Second", fontSize.floatValue)
+                    ShowTimeText(viewModel.duration.inWholeSeconds.toString(), "Second", fontSize.floatValue)
                 }
                 Spacer(modifier = Modifier.weight(1f))
 //                RoundCounter(
@@ -90,8 +90,8 @@ fun TimerPage(viewModel: HomePageViewModel) {
 
 fun getContainerColor(timerState: StopwatchState): Color {
     return when (timerState) {
-        StopwatchState.Started -> Color.Green
-        StopwatchState.Canceled -> Color.Red
+        StopwatchState.Started -> Color.Black
+        StopwatchState.Canceled -> Color.Black
         StopwatchState.Idle -> Color.Black
         StopwatchState.Stopped -> Color.Black
     }
@@ -99,10 +99,10 @@ fun getContainerColor(timerState: StopwatchState): Color {
 
 fun selectBackgroundColor(timerState: CurrentProgramState): Color {
     return when (timerState) {
-        CurrentProgramState.WORK -> Color.Cyan
-        CurrentProgramState.REST -> Color.Green
-        CurrentProgramState.READY_TO_START -> Color.White
-        CurrentProgramState.PREPARATION -> Color.White
+        CurrentProgramState.WORK -> Color.Black
+        CurrentProgramState.REST -> Color.Black
+        CurrentProgramState.READY_TO_START -> Color.Black
+        CurrentProgramState.PREPARATION -> Color.Black
     }
 }
 

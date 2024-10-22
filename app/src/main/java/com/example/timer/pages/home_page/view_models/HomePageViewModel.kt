@@ -16,14 +16,12 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
 
     val selectedProgram by stopwatchService.selectedProgram
 
-    val minutes by stopwatchService.minutes
-
-    val seconds by stopwatchService.seconds
+    val duration by stopwatchService.duration
 
     fun selectProgram(programIndex: Int, context: Context) {
         ServiceHelper.triggerForegroundService(
             context = context,
-            action = ServiceAction.ACTION_SERVICE_SET,
+            action = ServiceAction.ACTION_SERVICE_SET_PROGRAM,
             programIndex = programIndex
         )
     }
@@ -31,21 +29,21 @@ class HomePageViewModel(stopwatchService: StopwatchService) : ViewModel() {
     fun startTimer(context: Context) {
         ServiceHelper.triggerForegroundService(
             context = context,
-            action = ServiceAction.ACTION_SERVICE_START,
+            action = ServiceAction.ACTION_SERVICE_START_PROGRAM,
         )
     }
 
     fun stopTimer(context: Context) {
         ServiceHelper.triggerForegroundService(
             context = context,
-            action = ServiceAction.ACTION_SERVICE_STOP,
+            action = ServiceAction.ACTION_SERVICE_STOP_PROGRAM,
         )
     }
 
     fun cancelTimer(context: Context) {
         ServiceHelper.triggerForegroundService(
             context = context,
-            action = ServiceAction.ACTION_SERVICE_CANCEL,
+            action = ServiceAction.ACTION_SERVICE_CANCEL_PROGRAM,
         )
     }
 }
