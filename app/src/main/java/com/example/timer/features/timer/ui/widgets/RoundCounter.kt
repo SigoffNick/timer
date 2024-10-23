@@ -1,4 +1,4 @@
-package com.example.timer.ui.timer_page.widgets
+package com.example.timer.features.timer.ui.widgets
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

@@ -1,4 +1,4 @@
-package com.example.timer.service
+package com.example.timer.features.timer.services
 
 import android.app.PendingIntent
 import android.content.Context
@@ -7,7 +7,6 @@ import com.example.timer.core.Constant
 import com.example.timer.MainActivity
 import com.example.timer.core.enums.ServiceAction
 import com.example.timer.core.enums.StopwatchState
-import com.example.timer.core.training_programs.AmateurBoxingProgram
 
 /**
  * This class provides helper methods to create pending intents for the notification actions.

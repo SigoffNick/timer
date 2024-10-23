@@ -1,4 +1,4 @@
-package com.example.timer.service
+package com.example.timer.features.timer.services
 
 import android.app.Service
 import android.content.Intent
@@ -8,12 +8,10 @@ import com.example.timer.core.Constant
 import com.example.timer.core.enums.ServiceAction
 import com.example.timer.core.enums.StopwatchState
 import com.example.timer.core.extensions.toIntColor
-import com.example.timer.ui.timer_page.selectBackgroundColor
+import com.example.timer.features.timer.ui.selectBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Timer

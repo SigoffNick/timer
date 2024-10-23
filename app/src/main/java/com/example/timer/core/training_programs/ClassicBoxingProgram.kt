@@ -6,7 +6,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class ClassicBoxingProgram : TrainingProgram(
-    name = "2",//"Classic Boxing",
+    name = "Classic Boxing",
     programFlow = listOf(
         ClassicPreparationStep(),
         ClassicBoxingWorkStep(),

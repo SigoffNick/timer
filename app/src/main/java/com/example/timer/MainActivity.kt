@@ -15,10 +15,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.timer.service.StopwatchService
+import com.example.timer.features.timer.services.StopwatchService
 import com.example.timer.core.theme.StopWatchTheme
-import com.example.timer.pages.home_page.view_models.HomePageViewModel
-import com.example.timer.ui.timer_page.TimerPage
+import com.example.timer.features.timer.view_models.TimerPageViewModel
+import com.example.timer.features.timer.ui.TimerPage
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
      * The viewModel variable is used to store the HomePageViewModel instance.
      * The HomePageViewModel is used to manage the data for the TimerPage.
      */
-    private var viewModel: HomePageViewModel? = null
+    private var viewModel: TimerPageViewModel? = null
 
     /**
      * The onStart function is called when the MainActivity is started.
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
             StopWatchTheme {
                 if (isBound) {
                     if (viewModel == null) {
-                        viewModel = HomePageViewModel(stopwatchService = stopwatchService)
+                        viewModel = TimerPageViewModel(stopwatchService = stopwatchService)
                     }
                     TimerPage(viewModel = viewModel!!)
                 }

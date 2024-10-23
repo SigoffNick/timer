@@ -6,8 +6,8 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.timer.R
 import com.example.timer.core.Constant
-import com.example.timer.service.NotificationHelper
-import com.example.timer.service.ServiceHelper
+import com.example.timer.features.timer.services.NotificationHelper
+import com.example.timer.features.timer.services.ServiceHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

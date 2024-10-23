@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Timer"
         tools:targetApi="31">
-        <service android:name=".service.StopwatchService"
+        <service android:name=".features.timer.services.StopwatchService"
             android:foregroundServiceType="specialUse"
             android:enabled="true"
             android:exported="false" />

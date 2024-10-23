@@ -1,22 +1,14 @@
-package com.example.timer.service
+package com.example.timer.features.timer.services
 
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service.STOP_FOREGROUND_REMOVE
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.timer.core.Constant
 import com.example.timer.core.formatTime
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ServiceComponent
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
