@@ -35,6 +35,7 @@ object AppModule {
             .addAction(0, "Cancel", ServiceHelper.cancelPendingIntent(context))
             .addAction(0, "Stop", ServiceHelper.stopPendingIntent(context))
             .setContentIntent(ServiceHelper.clickPendingIntent(context))
+            .setColorized(true)
     }
 
     @ServiceScoped

@@ -28,6 +28,10 @@ import androidx.compose.ui.unit.sp
 import com.example.timer.core.Constant
 import com.example.timer.core.enums.CurrentProgramState
 import com.example.timer.core.enums.StopwatchState
+import com.example.timer.core.training_programs.program_step.PreparationStep
+import com.example.timer.core.training_programs.program_step.ProgramStep
+import com.example.timer.core.training_programs.program_step.RestStep
+import com.example.timer.core.training_programs.program_step.WorkStep
 import com.example.timer.ui.timer_page.widgets.PlayButton
 import com.example.timer.ui.timer_page.widgets.TrainingTypeSwitcher
 
@@ -48,7 +52,7 @@ fun TimerPage(viewModel: HomePageViewModel) {
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = getContainerColor(viewModel.currentProgramState)
+            containerColor = selectBackgroundColor(viewModel.currentStep)
         ) { innerPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,9 +70,17 @@ fun TimerPage(viewModel: HomePageViewModel) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ShowTimeText(viewModel.duration.inWholeMinutes.toString(), "Minute", fontSize.floatValue)
+                    ShowTimeText(
+                        viewModel.duration.inWholeMinutes.toString(),
+                        "Minute",
+                        fontSize.floatValue
+                    )
                     ShowDot(fontSize = fontSize.floatValue)
-                    ShowTimeText(viewModel.duration.inWholeSeconds.toString(), "Second", fontSize.floatValue)
+                    ShowTimeText(
+                        viewModel.duration.inWholeSeconds.toString(),
+                        "Second",
+                        fontSize.floatValue
+                    )
                 }
                 Spacer(modifier = Modifier.weight(1f))
 //                RoundCounter(
@@ -97,12 +109,12 @@ fun getContainerColor(timerState: StopwatchState): Color {
     }
 }
 
-fun selectBackgroundColor(timerState: CurrentProgramState): Color {
-    return when (timerState) {
-        CurrentProgramState.WORK -> Color.Black
-        CurrentProgramState.REST -> Color.Black
-        CurrentProgramState.READY_TO_START -> Color.Black
-        CurrentProgramState.PREPARATION -> Color.Black
+fun selectBackgroundColor(programStep: ProgramStep): Color {
+    return when (programStep) {
+        is PreparationStep -> Color.Black
+        is WorkStep -> Color.Green
+        is RestStep -> Color.Red
+        else -> Color.Black
     }
 }
 

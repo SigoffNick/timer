@@ -117,4 +117,11 @@ class NotificationHelper @Inject constructor(
         notificationManager.notify(Constant.NOTIFICATION_ID, notificationBuilder.build())
     }
 
+    /**
+     * The setNotificationColor function is used to update the notification's color.
+     */
+    fun setNotificationColor(color: Int) {
+        notificationBuilder.color = color
+        notificationManager.notify(Constant.NOTIFICATION_ID, notificationBuilder.build())
+    }
 }

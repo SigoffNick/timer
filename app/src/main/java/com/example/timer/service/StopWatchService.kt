@@ -7,11 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.timer.core.Constant
 import com.example.timer.core.enums.ServiceAction
 import com.example.timer.core.enums.StopwatchState
+import com.example.timer.core.extensions.toIntColor
+import com.example.timer.ui.timer_page.selectBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
@@ -26,11 +29,23 @@ import kotlin.time.Duration.Companion.seconds
 @AndroidEntryPoint
 class StopwatchService : Service() {
 
+    private val serviceJob = Job()
+    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+
     /**
-     * The NotificationHelper class is used to create and manage notifications.
+     * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
      */
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
+    private val binder = StopwatchBinder()
+
+    /**
+     * The timer variable is used to create a Timer object that will be used to update the stopwatch every second.
+     */
+    private lateinit var timer: Timer
+
+    /**
+     * The currentStepIndex variable is used to store the index of the current step in the program.
+     */
+    private var currentStepIndex: Int = 0
 
     /**
      * The _selectedProgram variable is used to store the selected training program.
@@ -43,24 +58,20 @@ class StopwatchService : Service() {
     var currentState = mutableStateOf(StopwatchState.Idle)
 
     /**
-     * The StopwatchBinder class is used to bind the StopwatchService to the MainActivity.
-     */
-    private val binder = StopwatchBinder()
-
-    /**
      * The duration variable is used to store the current duration of the stopwatch.
      */
     var duration = mutableStateOf(selectedProgram.value.programFlow[0].duration)
 
     /**
-     * The timer variable is used to create a Timer object that will be used to update the stopwatch every second.
+     * The currentStep variable is used to store the current step of the program.
      */
-    private lateinit var timer: Timer
-
     val currentStep = mutableStateOf(selectedProgram.value.programFlow[0])
 
-    private var currentStepIndex: Int = 0
-
+    /**
+     * The NotificationHelper class is used to create and manage notifications.
+     */
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
 
     /**
      * The onBind method is used to bind the StopwatchService to the MainActivity.
@@ -91,6 +102,14 @@ class StopwatchService : Service() {
     }
 
     /**
+     * The onDestroy method is used to clean up the service when it is destroyed.
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceJob.cancel() // Cancel the job when the service is destroyed
+    }
+
+    /**
      * The handleStopwatchState method is used to handle the stopwatch state based on the given state.
      */
     private fun handleStopwatchState(stopwatchState: String) {
@@ -101,17 +120,19 @@ class StopwatchService : Service() {
                 startStopwatch { minutes, seconds ->
                     notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
                 }
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
 
             StopwatchState.Stopped.name -> {
                 notificationHelper.setResumeButton(this)
                 stopStopwatch()
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
 
             StopwatchState.Canceled.name -> {
                 stopForegroundService()
-                stopStopwatch()
                 cancelStopwatch()
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
         }
     }
@@ -127,25 +148,29 @@ class StopwatchService : Service() {
     private fun handleAction(action: String) {
         when (action) {
             ServiceAction.ACTION_SERVICE_START_PROGRAM.name -> {
+                notificationHelper.setStopButton(this)
                 startForegroundService()
                 startStopwatch { minutes, seconds ->
                     notificationHelper.updateNotification(minutes = minutes, seconds = seconds)
                 }
-                notificationHelper.setStopButton(this)
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
 
             ServiceAction.ACTION_SERVICE_STOP_PROGRAM.name -> {
                 stopStopwatch()
                 notificationHelper.setResumeButton(this)
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
 
             ServiceAction.ACTION_SERVICE_CANCEL_PROGRAM.name -> {
                 stopForegroundService()
                 cancelStopwatch()
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
 
             ServiceAction.ACTION_SERVICE_SET_PROGRAM.name -> {
                 cancelStopwatch()
+                notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
             }
         }
     }
@@ -153,22 +178,19 @@ class StopwatchService : Service() {
     /**
      * The startStopwatch method is used to start the stopwatch.
      */
-    // TODO Can we don't use global scope
-    @OptIn(DelicateCoroutinesApi::class)
     private fun startStopwatch(onTick: (m: String, s: String) -> Unit) {
         currentState.value = StopwatchState.Started
         timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
             if (duration.value == Duration.ZERO) {
                 currentStepIndex++
                 if (currentStepIndex == selectedProgram.value.programFlow.size) {
+                    stopForegroundService()
                     cancelStopwatch()
+                    notificationHelper.setNotificationColor(selectBackgroundColor(programStep = currentStep.value).toIntColor())
                     return@fixedRateTimer
                 }
-                GlobalScope.launch {
-                    delay(1000L)
-                    duration.value = selectedProgram.value.programFlow[currentStepIndex].duration
-                    currentStep.value = selectedProgram.value.programFlow[currentStepIndex]
-                }
+                duration.value = selectedProgram.value.programFlow[currentStepIndex].duration
+                currentStep.value = selectedProgram.value.programFlow[currentStepIndex]
             } else {
                 duration.value = duration.value.minus(1.seconds)
                 duration.value.toComponents { minutes, seconds, _ ->
@@ -223,9 +245,8 @@ class StopwatchService : Service() {
     /**
      * The stopForegroundService method is used to stop the service in the foreground.
      */
-    @OptIn(DelicateCoroutinesApi::class)
-    fun stopForegroundService() {
-        GlobalScope.launch(Dispatchers.Default) {
+    private fun stopForegroundService() {
+        serviceScope.launch(Dispatchers.Default) {
             notificationHelper.cancelNotification()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
